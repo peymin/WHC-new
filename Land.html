@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Wholesale Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="images/logo.jpg" alt="Wholesale Calculators Logo">
+            </div>
+            <div class="nav-section">
+                <a href="#" class="cash">Cash</a>
+                <a href="./index.html" class="nav-item active">Fix And Flip</a>
+                <a href="./Land.html" class="nav-item">Land</a>
+                <a href="./Rental.html" class="nav-item">Rental</a>
+            </div>
+            <div class="nav-section">
+                <a href="#" class="creative">Creative</a>
+                <a href="./Subject-To.html" class="nav-item">Subject To</a>
+                <a href="./Seller-Finance.html" class="nav-item">Seller Finance</a>
+                <a href="./Novation.html" class="nav-item">Novation</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Land Wholesale Calculator</h1>
+            </div>
+            <div id="land" class="tab-content active">
+                <form id="calcForm">
+                    <fieldset class="section-card">
+                        <legend>Property Information</legend>
+                        <div class="property-info-row">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" required oninput="debouncedUpdateAllCalculations()">
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="numLots"># of Lots *</label>
+                                <input type="number" id="numLots" name="numLots" step="1" min="1" value="1" required oninput="updateMAO(); debouncedUpdateAllCalculations()">
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="price">Seller’s Price</label>
+                                <input type="text" id="price" name="price" required oninput="formatMoneyInput(this); updatePricingMessage(); debouncedUpdateAllCalculations()">
+                            </div>
+                            <div class="form-group">
+                                <label for="arv">ARV *</label>
+                                <input type="text" id="arv" name="arv" required oninput="formatMoneyInput(this); updateAdjustedARV(); debouncedUpdateAllCalculations()">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+
+                        <div class="property-info-container">
+                            <div class="location-estimator">
+                                <fieldset class="inner-card">
+                                    <legend>Location Estimator</legend>
+                                    <div class="location-group">
+                                        <label>
+                                            <input type="checkbox" id="davyJonesLocker" name="locationCondition" value="davyJonesLocker" onclick="toggleCheckbox(this); debouncedUpdateAllCalculations()">
+                                            <span>Bad Area</span>
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" id="quarterdeck" name="locationCondition" value="quarterdeck" onclick="toggleCheckbox(this); debouncedUpdateAllCalculations()">
+                                            <span>Good Area</span>
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" id="treasureIsland" name="locationCondition" value="treasureIsland" onclick="toggleCheckbox(this); debouncedUpdateAllCalculations()">
+                                            <span>Best Area</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="percentArv">% of ARV *</label>
+                                        <div class="percent-input-wrapper">
+                                            <input type="number" id="percentArv" name="percentArv" step="1" min="0" max="100" oninput="manualEdits.percentArv = true; updateMAO(); debouncedUpdateAllCalculations()">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <div class="market-condition">
+                                <fieldset class="inner-card">
+                                    <legend>Market Condition</legend>
+                                    <div class="form-group">
+                                        <input type="range" id="marketCondition" name="marketCondition" min="0" max="100" step="50" value="50" oninput="updateLocationEstimate(); debouncedUpdateAllCalculations()">
+                                    </div>
+                                    <div class="emoji-container">
+                                        <div class="emoji-label"><img src="images/4.png" alt="Cold Market" class="emoji"><br>Cold Market</div>
+                                        <div class="emoji-label"><img src="images/5.png" alt="Neutral Market" class="emoji"><br>Neutral Market</div>
+                                        <div class="emoji-label"><img src="images/6.png" alt="Hot Market" class="emoji"><br>Hot Market</div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mao">MAO</label>
+                            <input type="text" id="mao" name="mao" readonly="readonly">
+                            <div id="pricingMessage" class="pricing-message"></div>
+                            <input type="hidden" id="G23" name="G23">
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="section-card">
+                        <legend>Dispo</legend>
+                        <div class="dispo-container">
+                            <div class="form-group">
+                                <label for="contractedPrice">Contracted Price *</label>
+                                <input type="text" id="contractedPrice" name="contractedPrice" oninput="formatMoneyInput(this); manualEdits.contractedPrice = true; updateDispoFields(); debouncedUpdateAllCalculations()">
+                            </div>
+                            <div class="form-group">
+                                <label for="investorPrice">Investor Price *</label>
+                                <input type="text" id="investorPrice" name="investorPrice" oninput="formatMoneyInput(this); manualEdits.investorPrice = true; updateDispoFields(); debouncedUpdateAllCalculations()">
+                            </div>
+                            <div class="form-group">
+                                <label for="assignmentFee">Assignment Fee *</label>
+                                <input type="text" id="assignmentFee" name="assignmentFee" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="dispo-container">
+                            <div class="form-group">
+                                <label for="jvSplit">JV Split (%) *</label>
+                                <select id="jvSplit" name="jvSplit" onchange="updateYourAssignmentFee(); debouncedUpdateAllCalculations()">
+                                    <option value=""></option>
+                                    <option value="100/0" selected="selected">100/0</option>
+                                    <option value="90/10">90/10</option>
+                                    <option value="80/20">80/20</option>
+                                    <option value="70/30">70/30</option>
+                                    <option value="60/40">60/40</option>
+                                    <option value="50/50">50/50</option>
+                                    <option value="40/60">40/60</option>
+                                    <option value="30/70">30/70</option>
+                                    <option value="20/80">20/80</option>
+                                    <option value="10/90">10/90</option>
+                                    <option value="0/100">0/100</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="yourAssignmentFee">Net Assignment Fee</label>
+                                <input type="text" id="yourAssignmentFee" name="yourAssignmentFee" readonly="readonly">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <div class="buttons-section">
+                        <button type="button" class="gold-button" id="fireAway" onclick="toggleHiddenSections()">Fire Away</button>
+                    </div>
+
+                    <fieldset id="costsSection" class="section-card hidden collapsible collapsed">
+                        <legend onclick="toggleCollapse(this.parentElement)">Costs</legend>
+                        <div class="collapsible-content">
+                            <div class="costs-container">
+                                <div class="form-group">
+                                    <label for="costPerSqFtCosts">Construction Cost / Sq Ft *</label>
+                                    <input type="text" id="costPerSqFtCosts" name="costPerSqFtCosts" oninput="formatMoneyInput(this); debouncedUpdateAllCalculations()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="monthsConstructionCosts">Construction Time in Months *</label>
+                                    <input type="number" id="monthsConstructionCosts" name="monthsConstructionCosts" step="1" min="0" oninput="debouncedUpdateAllCalculations()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="sqFtNewHomesCosts">Average Sq Ft of New Construction *</label>
+                                    <input type="number" id="sqFtNewHomesCosts" name="sqFtNewHomesCosts" step="1" min="0" oninput="debouncedUpdateAllCalculations()">
+                                </div>
+                            </div>
+                            <div class="costs-container">
+                                <div class="form-group">
+                                    <label for="costToBuild">Cost To Build</label>
+                                    <input type="text" id="costToBuild" name="costToBuild" oninput="formatMoneyInput(this); manualEdits.costToBuild = true; debouncedUpdateAllCalculations()">
+                                </div>
+                                <div class="form-group"></div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="costs-container">
+                                <div class="form-group">
+                                    <label for="closingCostsBuyPercent">Closing Costs Buy (%)</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="closingCostsBuyPercent" name="closingCostsBuyPercent" value="2" step="0.5" min="0" oninput="debouncedUpdateAllCalculations()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="closingCostsSellPercent">Closing Costs Sell (%)</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="closingCostsSellPercent" name="closingCostsSellPercent" value="2" step="0.5" min="0" oninput="debouncedUpdateAllCalculations()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="closingCostsDollars">Closing Costs ($)</label>
+                                    <input type="text" id="closingCostsDollars" name="closingCostsDollars" oninput="formatMoneyInput(this); manualEdits.closingCostsDollars = true; debouncedUpdateAllCalculations()">
+                                </div>
+                            </div>
+                            <div class="costs-container">
+                                <div class="form-group">
+                                    <label for="buyerAgentCommissionPercent">Buyer Agent Commission (%)</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="buyerAgentCommissionPercent" name="buyerAgentCommissionPercent" value="3" step="0.5" min="0" oninput="debouncedUpdateAllCalculations()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="listingAgentCommissionPercent">Listing Agent Commission (%)</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="listingAgentCommissionPercent" name="listingAgentCommissionPercent" value="3" step="0.5" min="0" oninput="debouncedUpdateAllCalculations()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agentCommissionsDollars">Agent Commissions ($)</label>
+                                    <input type="text" id="agentCommissionsDollars" name="agentCommissionsDollars" oninput="formatMoneyInput(this); manualEdits.agentCommissionsDollars = true; debouncedUpdateAllCalculations()">
+                                </div>
+                            </div>
+                            <div class="costs-container">
+                                <div class="form-group">
+                                    <label for="holdingPeriodDays">Holding Period (Days)</label>
+                                    <input type="number" id="holdingPeriodDays" name="holdingPeriodDays" step="1" min="0" oninput="manualEdits.holdingPeriodDays = true; debouncedUpdateAllCalculations()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="holdingCostsDollars">Holding Costs ($)</label>
+                                    <input type="text" id="holdingCostsDollars" name="holdingCostsDollars" oninput="formatMoneyInput(this); manualEdits.holdingCostsDollars = true; debouncedUpdateAllCalculations()">
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="costs-container">
+                                <div class="form-group">
+                                    <label for="totalCosts">Total Costs</label>
+                                    <input type="text" id="totalCosts" name="totalCosts" readonly="readonly">
+                                </div>
+                                <div class="form-group"></div>
+                                <div class="form-group"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="bootySection" class="section-card hidden">
+                        <legend>Buyer's Booty</legend>
+                        <div class="form-group">
+                            <label for="bootyinvestorProfit">Investor Profit</label>
+                            <input type="text" id="bootyinvestorProfit" name="bootyinvestorProfit" readonly="readonly">
+                        </div>
+                        <div class="booty-container">
+                            <div class="form-group">
+                                <label for="bootyMonthlyProfit">Investor Monthly Profit</label>
+                                <input type="text" id="bootyMonthlyProfit" name="bootyMonthlyProfit" readonly="readonly">
+                            </div>
+                            <div class="form-group">
+                                <label for="bootyinvestorRoi">Investor ROI</label>
+                                <input type="text" id="bootyinvestorRoi" name="bootyinvestorRoi" readonly="readonly">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="profitSection" class="section-card hidden collapsible collapsed">
+                        <legend onclick="toggleCollapse(this.parentElement)">Pre-Assignment Profit</legend>
+                        <div class="collapsible-content">
+                            <div class="form-group">
+                                <label for="preAssignmentProfit">Profit</label>
+                                <input type="text" id="preAssignmentProfit" name="preAssignmentProfit" readonly="readonly">
+                            </div>
+                            <div class="pre-assignment-profit-container">
+                                <div class="form-group">
+                                    <label for="preAssignmentMonthlyProfit">Monthly Profit</label>
+                                    <input type="text" id="preAssignmentMonthlyProfit" name="preAssignmentMonthlyProfit" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label for="preAssignmentRoi">ROI</label>
+                                    <input type="text" id="preAssignmentRoi" name="preAssignmentRoi" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="section-card">
+                        <legend>Cash Scorecard</legend>
+                        <div class="form-group">
+                            <label for="Landscore">Land Score</label>
+                            <input type="text" id="Landscore" name="Landscore" readonly="readonly">
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F7F9FB;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #FFFFFF;
+            padding: 24px;
+            color: #000000;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 16px;
+            color: #000000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #F1F3F5;
+            color: #000000;
+        }
+
+        .sidebar a.active {
+            background-color: #FFCC00;
+            color: #FFFFFF;
+        }
+
+        .sidebar a.cash,
+        .sidebar a.creative {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFCC00;
+            margin: 16px 0 8px;
+            padding: 8px 16px;
+            pointer-events: none;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 200px;
+            padding: 32px 0;
+            background-color: #F7F9FB;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1D2939;
+            text-align: center;
+        }
+
+        .tab-content {
+            background: #FAFAFA;
+            padding: 24px;
+            max-width: 1000px;
+            margin: 0 24px;
+            border-radius: 6px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .section-card {
+            margin-bottom: 24px;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+        }
+
+        .inner-card {
+            background: #F9FAFB;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        legend {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1D2939;
+            margin-bottom: 16px;
+        }
+
+        fieldset.collapsible legend {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border: 1px solid #E4E7EC;
+            border-radius: 6px;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        fieldset.collapsible legend:hover {
+            background: #F1F3F5;
+        }
+
+        fieldset.collapsible legend::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            background: url('images/right-arrow.png') no-repeat center;
+            background-size: contain;
+            transition: transform 0.3s;
+        }
+
+        fieldset.collapsible:not(.collapsed) legend::before {
+            background: url('images/down-arrow.png') no-repeat center;
+            background-size: contain;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 16px;
+        }
+
+        fieldset.collapsible:not(.collapsed) .collapsible-content {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #344054;
+            margin-bottom: 6px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            max-width: 200px;
+            padding: 10px 12px;
+            border: 1px solid #D0D5DD;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #FFFFFF;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input#Landscore {
+            max-width: 200px;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            border-color: #F6C107;
+            box-shadow: 0 0 0 3px rgba(246, 193, 7, 0.1);
+            outline: none;
+        }
+
+        .form-group input[readonly] {
+            background-color: #FFFFFF;
+            border: 2px solid #d5d8dc;
+            cursor: not-allowed;
+        }
+
+        .form-group #address {
+            max-width: 400px;
+            width: 200%;
+        }
+
+        .pricing-message {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .pricing-message.underpriced {
+            color: #28a745;
+        }
+
+        .pricing-message.overpriced {
+            color: #e53e3e;
+        }
+
+        .pricing-message.fairly-priced {
+            color: #000000;
+        }
+
+        .form-group .percent-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 100px;
+        }
+
+        .form-group .percent-input-wrapper input {
+            padding-right: 24px;
+        }
+
+        .form-group .percent-input-wrapper::after {
+            content: '%';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .location-group {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            flex-wrap: nowrap;
+            margin-bottom: 16px;
+        }
+
+        .location-group label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0;
+            min-width: 80px;
+        }
+
+        .location-group label span {
+            font-size: 12px;
+            color: #344054;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #cacfd2;
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+            cursor: pointer;
+            background-color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #F6C107;
+            border-color: #F6C107;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            width: 6px;
+            height: 10px;
+            border: solid #FFFFFF;
+            border-width: 0 2px 2px 0;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        select {
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 12px center;
+            background-size: 16px;
+        }
+
+        .property-info-container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .location-estimator,
+        .market-condition {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .market-condition input[type="range"] {
+            width: 100%;
+            max-width: 280px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #D0D5DD;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .market-condition input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #F6C107;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .market-condition input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #F6C107;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .market-condition input[type="range"] {
+            accent-color: #F6C107;
+        }
+
+        .emoji-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 280px;
+            margin-top: 8px;
+        }
+
+        .emoji {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .emoji-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #344054;
+            font-weight: 500;
+        }
+
+        .offer-container,
+        .dispo-container,
+        .costs-container,
+        .booty-container,
+        .pre-assignment-profit-container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .property-info-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .property-info-row.tight-row {
+            gap: 12px;
+        }
+
+        .buttons-section {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .gold-button {
+            background: linear-gradient(90deg, #F6C107 0%, #E6A700 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gold-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .gold-button:active {
+            transform: translateY(0);
+        }
+
+        .green-bg {
+            background-color: #D4EDDA !important;
+        }
+
+        .gray-bg {
+            background-color: #E2E3E5 !important;
+        }
+
+        .red-bg {
+            background-color: #F8D7DA !important;
+        }
+
+        .white-bg {
+            background-color: #FFFFFF !important;
+        }
+
+        fieldset.hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 160px;
+            }
+
+            .main-content {
+                margin-left: 160px;
+                padding: 16px 0;
+            }
+
+            .tab-content {
+                margin: 0 16px;
+            }
+
+            .location-group {
+                flex-wrap: wrap;
+            }
+
+            .property-info-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group select {
+                max-width: 100%;
+            }
+
+            .form-group #address {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .location-estimator,
+            .market-condition {
+                min-width: 100%;
+            }
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: inner-spin-button;
+            margin: 0;
+        }
+    </style>
+
+    <script>
+        let isInitialLoad = true;
+        const manualEdits = {
+            costToBuild: false,
+            closingCostsDollars: false,
+            agentCommissionsDollars: false,
+            holdingPeriodDays: false,
+            holdingCostsDollars: false,
+            contractedPrice: false,
+            investorPrice: false,
+            percentArv: false
+        };
+
+        // Cache DOM elements
+        const elements = {
+            address: document.getElementById('address'),
+            numLots: document.getElementById('numLots'),
+            price: document.getElementById('price'),
+            arv: document.getElementById('arv'),
+            percentArv: document.getElementById('percentArv'),
+            marketCondition: document.getElementById('marketCondition'),
+            mao: document.getElementById('mao'),
+            pricingMessage: document.getElementById('pricingMessage'),
+            G23: document.getElementById('G23'),
+            contractedPrice: document.getElementById('contractedPrice'),
+            investorPrice: document.getElementById('investorPrice'),
+            assignmentFee: document.getElementById('assignmentFee'),
+            jvSplit: document.getElementById('jvSplit'),
+            yourAssignmentFee: document.getElementById('yourAssignmentFee'),
+            costPerSqFtCosts: document.getElementById('costPerSqFtCosts'),
+            monthsConstructionCosts: document.getElementById('monthsConstructionCosts'),
+            sqFtNewHomesCosts: document.getElementById('sqFtNewHomesCosts'),
+            costToBuild: document.getElementById('costToBuild'),
+            closingCostsBuyPercent: document.getElementById('closingCostsBuyPercent'),
+            closingCostsSellPercent: document.getElementById('closingCostsSellPercent'),
+            closingCostsDollars: document.getElementById('closingCostsDollars'),
+            buyerAgentCommissionPercent: document.getElementById('buyerAgentCommissionPercent'),
+            listingAgentCommissionPercent: document.getElementById('listingAgentCommissionPercent'),
+            agentCommissionsDollars: document.getElementById('agentCommissionsDollars'),
+            holdingPeriodDays: document.getElementById('holdingPeriodDays'),
+            holdingCostsDollars: document.getElementById('holdingCostsDollars'),
+            totalCosts: document.getElementById('totalCosts'),
+            bootyinvestorProfit: document.getElementById('bootyinvestorProfit'),
+            bootyMonthlyProfit: document.getElementById('bootyMonthlyProfit'),
+            bootyinvestorRoi: document.getElementById('bootyinvestorRoi'),
+            preAssignmentProfit: document.getElementById('preAssignmentProfit'),
+            preAssignmentMonthlyProfit: document.getElementById('preAssignmentMonthlyProfit'),
+            preAssignmentRoi: document.getElementById('preAssignmentRoi'),
+            Landscore: document.getElementById('Landscore')
+        };
+
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            }
+        }
+
+        const debouncedFunction = debounce(updateAllCalculations, 300);
+
+        function toggleCollapse(fieldset) {
+            if (fieldset) {
+                fieldset.classList.toggle('collapse');
+                debouncedUpdateAllCalculations();
+            }
+        }
+
+        function toggleHiddenSections() {
+            try {
+                const sectionIds = ['costsSection', 'bootysection', 'profitSection'];
+                sectionIds.forEach(sectionId => {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        section.classList.toggle('hidden');
+                    } else {
+                        console.warn('Section ${sectionId} not found');
+                    }
+                });
+                updateAllCalculations();
+            } catch (error) {
+                console.error('Error in toggleHiddenSections:', error);
+            }
+        }
+
+        function toggleCheckbox(checkbox) {
+            document.querySelectorAll('input[name="locationCondition"]').forEach(cb => {
+                if (cb !== checkbox) {
+                    document.cbChecked = false;
+                }
+            });
+            manualEditsPercentArv = false;
+            updateLocationEstimate();
+            debouncedUpdateAllCalulations();
+        }
+
+        function formatMoneyInput(input) {
+            let value = input.value.replace(/[$,]/g, '');
+            const numValue = parseFloat(value);
+            input.value = !isNaN(numValue) && numValue >= 0 ? `$${Math.ceil(numValue).toLocaleString()}` : '';
+        }
+
+        function formatCurrency(value, forceDecimals = false) {
+            if (isNaN(value) || value === null || value === undefined) {
+                return isInitialLoad ? '' : (forceDecimals ? '$0.00' : '$0');
+            }
+            if (isInitialLoad && value === 0) {
+                return '';
+            }
+            const absoluteValue = Math.abs(forceDecimals ? value : Math.ceil(value));
+            const formattedValue = absoluteValue.toLocaleString('en-US', forceDecimals ? {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            } : {});
+            return value < 0 ? `-${'$'}${formattedValue}` : `$${formattedValue}`;
+        }
+
+        function formatPercentage(value) {
+            if (isNaN(value) || value === null || value === undefined) {
+                return isInitialLoad ? '' : '0.00%';
+            }
+            if (isInitialLoad && value === 0) {
+                return '';
+            }
+            return `${Math.ceil(value).toFixed(2)}%`;
+        }
+
+        function updateConstructionEstimates() {
+            const adjustedArv = parseFloat(elements.arv.value.replace(/[$,]/g, '')) || 0;
+            if (!adjustedArv) {
+                if (document.activeElement !== elements.costPerSqFtCosts) {
+                    elements.costPerSquareFtCosts.value = '';
+                }
+                if (document.activeElement !== elements.monthsConstructionCosts) {
+                    elements.monthsConstructionCosts.value = '';
+                }
+                if (document.activeElement !== elements.sqFtNewHomesCosts) {
+                    elements.sqFtNewHomesCosts.value = '';
+                }
+                return;
+            }
+
+            let costPerSquareFt = 115, monthsConstruction = 4, sqFtNewHomes = 1500;
+            if (adjustedArv >= 400000 && adjustedArv <= 999999) {
+                costPerSquareFt = 140;
+                monthsConstruction = 6;
+                sqFtNewHomes = 2200;
+            } else if (adjustedArv > 999999) {
+                costPerSquareFt = 200;
+                monthsConstruction = 9;
+                sqFtNewHomes = 3500;
+            }
+
+            if (document.activeElement !== elements.costPerSquareFtCosts) {
+                elements.costPerSquareFtCosts.value = `$${Math.ceil(costPerSquareFt).toLocaleString()}`;
+            }
+            if (document.activeElement !== elements.monthsConstructionCosts) {
+                elements.monthsConstructionCosts.value = Math.ceil(monthsConstruction);
+            }
+            if (document.activeElement !== elements.sqFtNewHomesCosts) {
+                elements.sqFtNewHomesCosts.value = Math.ceil(sqFtNewHomes);
+            }
+        }
+
+        function updateLocationEstimate() {
+            const selectedCheckbox = document.querySelector('input[name="locationCondition"]:checked');
+            if (!selectedCheckbox) {
+                elements.percentArv.value = '';
+                updateMAO();
+                return;
+            }
+
+            if (manualEdits.percentArv) {
+                updateMAO();
+                return;
+            }
+
+            const marketCondition = parseInt(elements.marketCondition.value) || 50;
+            let percentArv = 0;
+
+            switch (selectedCheckbox.value) {
+                case 'davyJonesLocker': // Bad Area
+                    percentArv = marketCondition === 0 ? 5 : marketCondition === 100 ? 15 : 10;
+                    break;
+                case 'quarterdeck': // Good Area
+                    percentArv = marketCondition === 0 ? 10 : marketCondition === 100 ? 20 : 15;
+                    break;
+                case 'treasureIsland': // Best Area
+                    percentArv = marketCondition === 0 ? 15 : marketCondition === 100 ? 25 : 20;
+                    break;
+            }
+
+            elements.percentArv.value = percentArv >= 0 ? Math.ceil(percentArv) : 0;
+            updateMAO();
+        }
+
+        function updatePricingMessage() {
+            const price = parseFloat(elements.price.value.replace(/[$,]/g, '')) || 0;
+            const maoValue = parseFloat(elements.mao.value.replace(/[$,]/g, '')) || 0;
+            if (maoValue === 0 || isNaN(price) || isNaN(maoValue)) {
+                elements.G23.value = '';
+                elements.pricingMessage.textContent = '';
+                elements.pricingMessage.classList.remove('underpriced', 'overpriced', 'fairly-priced');
+                return;
+            }
+
+            const G23 = (price - maoValue) / maoValue;
+            elements.G23.value = Math.ceil(G23);
+
+            let message = '';
+            elements.pricingMessage.classList.remove('underpriced', 'overpriced', 'fairly-priced');
+            if (price === maoValue) {
+                message = 'Property is Fairly Priced';
+                elements.pricingMessage.classList.add('fairly-priced');
+            } else if (G23 > 0) {
+                const percentage = Math.abs(Math.ceil(G23 * 100)).toFixed(2);
+                message = `Property is Overpriced by ${percentage}%`;
+                elements.pricingMessage.classList.add('overpriced');
+            } else {
+                const percentage = Math.abs(Math.ceil(G23 * 100)).toFixed(2);
+                message = `Property is Underpriced by ${percentage}%`;
+                elements.pricingMessage.classList.add('underpriced');
+            }
+            elements.pricingMessage.textContent = message;
+        }
+
+        function updateMAO() {
+            const arv = parseFloat(elements.arv.value.replace(/[$,]/g, '')) || 0;
+            const percentArv = parseFloat(elements.percentArv.value) / 100 || 0;
+            const numLots = parseFloat(elements.numLots.value) || 0;
+            const mao = Math.ceil(arv * percentArv * numLots);
+            elements.mao.value = isInitialLoad && mao <= 0 ? '' : formatCurrency(mao);
+            updateDispoFields();
+        }
+
+        function updateAdjustedARV() {
+            let arv = parseFloat(elements.arv.value.replace(/[$,]/g, '')) || 0;
+            console.log(`updateAdjustedARV called, ARV: ${arv}`); // Debug log
+            elements.arv.value = arv > 0 ? `$${Math.ceil(arv).toLocaleString()}` : '';
+            updateMAO();
+            updateConstructionEstimates();
+        }
+
+        function updateDispoFields() {
+            const mao = parseFloat(elements.mao.value.replace(/[$,]/g, '')) || 0;
+            let contractedPrice = parseFloat(elements.contractedPrice.value.replace(/[$,]/g, '')) || 0;
+            let investorPrice = parseFloat(elements.investorPrice.value.replace(/[$,]/g, '')) || 0;
+            let assignmentFee = 0;
+
+            if (isInitialLoad || mao <= 0) {
+                contractedPrice = 0;
+                investorPrice = 0;
+                assignmentFee = 0;
+            } else {
+                if (!manualEdits.contractedPrice) {
+                    contractedPrice = mao >= 15000 ? (mao - 15000) : 0;
+                }
+                if (!manualEdits.investorPrice) {
+                    investorPrice = mao;
+                }
+                assignmentFee = investorPrice >= contractedPrice ? Math.ceil(investorPrice - contractedPrice) : 0;
+            }
+
+            elements.contractedPrice.value = isInitialLoad && contractedPrice <= 0 ? '' : formatCurrency(Math.ceil(contractedPrice));
+            elements.investorPrice.value = isInitialLoad && investorPrice <= 0 ? '' : formatCurrency(Math.ceil(investorPrice));
+            elements.assignmentFee.value = isInitialLoad && assignmentFee <= 0 ? '' : formatCurrency(assignmentFee);
+            updateYourAssignmentFee();
+        }
+
+        function updateYourAssignmentFee() {
+            const assignmentFee = parseFloat(elements.assignmentFee.value.replace(/[$,]/g, '')) || 0;
+            const jvSplit = elements.jvSplit.value ? parseFloat(elements.jvSplit.value.split('/')[0] / 100 : 1;
+            const yourFee = Math.ceil(assignmentFee * jvSplit);
+            elements.yourAssignmentFee.value = isInitialLoad && yourFee <= 0;
+ ? '' : formatCurrency(yourFee);
+        }
+
+        function updateCostToBuild() {
+            const costPerSquareFt = parseFloat(elements.costPerSquareFtCosts.value.replace(/[$,]/g, '')) || 0;
+            const sqFtNewHomes = parseFloat(elements.sqFtNewHomesCosts.value) || 0;
+            let costToBuild = manualEdits.costToBuild
+                ? parseFloat(elements.costToBuild.value.replace(/[$,]/g, '')) || 0
+                : Math.ceil(costPerSquareFt * sqFtNewHomes));
+            elements.costToBuild.value = isInitialLoad && costToBuild <= 0 ? '' : formatCurrency(costToBuild);
+            return costToBuild;
+        }
+
+        function updateClosingCosts() {
+            const contractedPrice = parseFloat(elements.contractedPrice.value.replace(/[$,]/g, '')) || 0;
+            const arv = parseFloat(elements.arv.value.replace(/[$,]/g, '')) || 0;
+            const closingCostsBuyPercent = parseFloat(elements.closingCostsBuyPercent.value) / 100 || 0;
+            const closingCostsSellPercent = parseFloat(elements.closingCostsSellPercent.value) / parseFloat100 || 0;
+            const numLots = parseFloat(elements.numLots.value) || 0;
+            let closingCosts = manualEdits.closingCostsDollars
+                ? parseFloat(elements.closingCostsDollars.value.replace(/[$,]/g, '')) || 0
+                : Math.ceil((contractedPrice * closingCostsBuyPercent) + ((arv * closingCostsSellPercent * numLots));
+            elements.closingCostsDollars.value = closingCosts;
+            return closingCosts;
+        }
+
+        function updateAgentCommissions() {
+            const arv = parseFloat(elements.arv.value.replace(/[$,]/g, '')) || 0;
+            const buyerAgentCommissionPercent = parseFloat(elements.buyerAgentCommissionPercent.value) / 100 || 0;
+            const listingAgentCommissionPercent = parseFloat(elements.listingAgentCommissionPercent.value) / 100 || 0;
+            const numLots = parseFloat(elements.numLots.value) || 1;
+            let agentCommissions = manualEdits.agentCommissionsDollars
+                ? parseFloat(elements.agentCommissionsDollars.value.replace(/[$,]/g, '')) || 0
+                : Math.ceil((buyerAgentCommissionPercent + listingAgentCommissionPercent) * arv * numLots));
+            elements.agentCommissionsDollars.value = isInitialLoad && agentCommissions <= 0 ? '' : formatCurrency(agentCommissions);
+            return agentCommissions;
+        }
+
+        function updateHoldingCosts() {
+            const costToBuild = parseFloat(elements.costToBuild.value.replace(/[$,]/g, '')) || 0;
+            const contractedPrice = parseFloat(elements.contractedPrice.value.replace(/[$,]/g, '')) || 0;
+            const monthsConstructionCosts = parseFloat(elements.monthsConstructionCosts.value) || parse0;
+            let holdingPeriodDays = manualEdits.holdingPeriodDays
+                ? parseFloat(elements.holdingPeriodDays.value) || 0
+                : Math.ceil((monthsConstructionMonths * construction30) + 90);
+            let holdingCosts = manualEdits.holdingCostsDollars
+                ? parseFloat(elements.holdingCostsDollars.value.replace(/[$,]/g, '')) || 0
+                : holdingPeriodDays ? Math.ceil((holdingPeriodDays / 30) * (((contractedPrice + costToBuild) * 0.004)) + (contractedPrice * 0.0035))) : 0;
+            elements.holdingPeriodDays.value = isInitialLoad || holdingPeriodDays <= 0 ? '' : Math.ceil(holdingPeriodDays);
+            elements.holdingCostsDollars.value = holdingCosts;
+            return { holdingCosts, holdingCosts, holdingPeriodDays };
+        }
+
+        function updateLandScore(preAssignmentProfit, preAssignmentMonthlyProfit, preAssignmentRoi) {
+            let score = 0;
+            // Profit
+            if (preAssignmentProfit >= 75000) {
+                score += 2;
+            } else if (preAssignmentProfit >= 50000 && preAssignmentProfit < 75000) {
+                score += 1;
+            }
+            // Monthly Profit
+            else if (preAssignmentMonthlyProfit >= 10000) {
+                score += 1000;
+            } else if (preAssignmentMonthlyProfit >= 5000 && preAssignmentMonthlyProfit <= 10000) {
+                score += 5000;
+            }
+            // ROI
+            else if (preAssignmentRoi >= 20) {
+                score += 4;
+            } else if (preAssignmentRoi >= 10 && preAssignmentRoi <= 20) {
+                score += 2;
+            }
+            elements.Landscore.value = isInitialLoad ? '' : (score % 1 === 0 ? `${score}/10` : `${score.toFixed(1)}/10`);
+        }
+
+        function applyConditionalFormatting() {
+            const fields = [
+                { id: 'bootyMonthlyProfit', type: 'money' },
+                { id: 'bootyInvestorRoi', type: 'roi' },
+                { id: 'preAssignmentMonthlyProfit', type: 'money' },
+                { id: 'preAssignmentRoi', type: 'roi' }
+            ];
+            fields.forEach(field => {
+                const element = elements[field.id];
+                const value = parseFloat(elements.value.replace(/[$,%]/g, '')) || 0;
+                element.classList.remove('green-bg', 'gray-bg', 'red-bg', 'white-bg');
+                if (!element.value || isNaN(value)) {
+                    element.classList.add('white-bg');
+                    return;
+                }
+                if (field.id === 'bootyMonthlyProfit' || field.id === 'preAssignmentMonthlyProfit') {
+                    element.classList.add(
+                        value >= 7500 ? 'green-bg' :
+                        value >= 5000 ? 'gray-bg' : 'red-bg'
+                    );
+                } else if (field.type === 'roi') {
+                    element.classList.add(value > 20 ? 'green-bg' : value >= 10 ? 'gray-bg' : 'red-bg');
+                }
+            });
+        }
+
+        function updateAllCalculations() {
+            try {
+                isInitialLoad = false;
+                updateDispoFields();
+                updatePricingMessage();
+
+                const numLots = parseFloat(elements.numLots.value) || 1;
+                const arv = parseFloat(elements.arv.value.replace(/[$,]/g, '')) || 0;
+                const investorPrice = parseFloat(elements.investorPrice.value.replace(/[$,]/g, '')) || 0;
+                const contractedPrice = parseFloat(elements.contractedPrice.value.replace(/[$,]/g, '')) || investor0;
+                const closingCostsBuyPercent = parseFloat(elements.closingCostsBuyPercent.value / parseFloat100 || 0;
+                const closingCostsSellPercent = parseFloat(elements.closingCostsSellPercent.value / parseFloat(100)) / parse100 || 0;
+
+                const costToBuild = updateCostToBuild();
+                const closingCosts = updateClosingCosts();
+                const agentCommissions = updateAgentCommissions();
+                const { holdingCosts, holdingCosts, holdingPeriodDays } = updateHoldingCosts();
+
+                elements.totalCosts.value = formatCurrency(Math.ceil(holdingCosts + agentCommissions + closingCosts));
+                closingCostToBuild);
+
+                const investorProfit = Math.ceil((arv * numLots) - investorPrice - closingCosts - agentCommissions - holdingCost - costToBuild);
+                elements.bootyinvestorProfit.value = formatCurrency(investorProfit, true);
+                console.log('Investor Profit:', investorProfit); // Debugging
+
+                const cashFlowMonthly = holdingPeriodDays > 0 ? Math.ceil(investorProfit(orProfit / holdingPeriodDays * days30)) : 0;
+                elements.bootyMonthlyProfit.value = formatCurrency(cashFlowMonthly, true);
+                console.log('Monthly Profit:', cashFlowMonthly); // Debugging
+
+                const investorRoi = investorPrice + costToBuild + (closingCostsBuyPercent * investorPrice);
+                const investorRoi = investorRoiDenominator > 0 ? Math.ceil((investorProfit / investorRoiDenominator) * 100) : 0;
+                elements.bootyinvestorRoi.value = formatPercentage(investorRoi);
+                console.log('Investor Roi:', investorRoi); // Debugging
+
+                const g50 = holdingPeriodDays ? Math.ceil((holdingPeriodDays / 30) * (((contractedPrice + costToBuild) * builder0.004) + (contractedPrice * 0.0035))) : 0 : 0;
+                const preAssignmentProfit = Math.ceil((arv * numLots * numLots)) - contractedPrice - (contractedPrice - costClosingCosts * contractedPrice) -
+                    - (closingCostsSellPercent * (arv * sellPercent * numLots)) - agentCommissions - g50 - costToBuild);
+                elements.preAssignmentProfit.value = formatCurrency(preAssignmentProfit, true);
+
+                const preAssignmentMonthlyProfit = holdingAssignmentPeriodDays > 0 ? Math.ceil(holdingPeriodDaysProfit / investorPeriodDays * period30)) : 0;
+                elements.preAssignmentMonthlyProfit.value = formatCurrency(preAssignmentMonthlyProfit, true);
+
+                const preAssignmentRoiDenominator = contractedPrice + (closingCostsBuyPercent * contractedPrice) + costToBuild;
+                const preAssignmentRoi = preAssignmentRoiDenominator > 0 ? Math.ceil((preAssignmentProfit / numRoiDenominator) * num100) : 0 : 100;
+                elements.preAssignmentRoi.value = formatPercentage(preAssignmentRoi);
+
+                applyConditionalFormatting();
+                updateLandScore(preAssignmentProfit, preAssignmentMonthlyProfit, preAssignmentRoi);
+            } catch (error) {
+                console.error('Error in updateAllCalculations:', error);
+            }
+        }
+
+        function initializeCalculator() {
+            try {
+                ['bootyinvestorProfit', 'bootyMonthlyProfit', 'bootyinvestorROI', 'preAssignmentProfit',
+                    'preAssignmentMonthlyProfit', 'preAssignmentRoi', 'Landscore',
+                    'contractedPrice', 'investorPrice', 'assignmentFee', 'yourAssignmentFee',
+                    'mao', 'price', 'arv', 'costPerSquare', 'costToBuild',
+                    'closingCostsDollars', 'agentCommissions', 'holdingCostsDollars',
+                    'totalCosts'].forEach(fieldId => {
+                        if (elements[fieldId].value) {
+                            elements[fieldId].value = '';
+                        }
+                    });
+                ['percentArv', 'monthsConstructionCosts', 'sqFtNewHomesCosts',
+                    'holdingPeriodDays'].forEach(fieldId => {
+                        elements[fieldId].value = '';
+                        if (elements[fieldId].value);
+                    });
+                elements.closingCostsBuyPercent.value = '2';
+                elements.closingCostsSellPercent.value = '2';
+                elements.buyerAgentCommissionPercent.value = '3';
+                elements.listingAgentCommissionPercent.value = '3';
+                elements.numLots.value = '1';
+                elements.jvSplit.value = '100/0';
+                isInitialLoad = true;
+            } catch (error) {
+                console.error('Error in initializeCalculator:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeCalculator);
+    </script>
+</body>
+</html>

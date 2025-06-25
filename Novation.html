@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novation Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="images/logo.jpg" alt="Wholesale Calculators Logo">
+            </div>
+            <div class="nav-section">
+                <a href="#" class="cash">Cash</a>
+                <a href="./index.html" class="nav-item active">Fix And Flip</a>
+                <a href="./Land.html" class="nav-item">Land</a>
+                <a href="./Rental.html" class="nav-item">Rental</a>
+            </div>
+            <div class="nav-section">
+                <a href="#" class="creative">Creative</a>
+                <a href="./Subject-To.html" class="nav-item">Subject To</a>
+                <a href="./Seller-Finance.html" class="nav-item">Seller Finance</a>
+                <a href="./Novation.html" class="nav-item">Novation</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Novation Calculator</h1>
+            </div>
+            <div id="rental-wholesale" class="tab-content active">
+                <form id="calcForm">
+                    <!-- Hidden Field for E14 -->
+                    <input type="hidden" id="priceMaoPercent" name="priceMaoPercent">
+
+                    <!-- Group 1: Property Information -->
+                    <fieldset class="section-card property-details-section">
+                        <legend>Property Information</legend>
+                        <div class="property-info-row">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" required>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="purchasePrice">Seller’s Price</label>
+                                <input type="text" id="purchasePrice" name="purchasePrice" required oninput="updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group">
+                                <label for="asIsValue">As Is Value *</label>
+                                <input type="text" id="asIsValue" name="asIsValue" required oninput="updateClosingCostsOffer(); updateAgentCommissions(); updateBuffer(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Group 2: Costs -->
+                    <fieldset class="section-card">
+                        <legend>Costs</legend>
+                        <!-- Row 1: Closing Costs Sell (%), Closing Costs ($), Blank -->
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="closingCostsPercent">Closing Costs Sell (%)</label>
+                                <div class="percent-input-wrapper">
+                                    <input type="number" id="closingCostsPercent" name="closingCostsPercent" step="0.5" min="0" value="2" oninput="updateClosingCostsOffer()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="totalClosingCosts">Closing Costs ($)</label>
+                                <input type="text" id="totalClosingCosts" name="totalClosingCosts" oninput="updateTotalAcquisitionExpenses(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <!-- Row 2: Buyer Agent Commissions (%), Listing Agent Commissions (%), Agent Commissions ($) -->
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="buyerAgentCommissionsPercent">Buyer Agent Commissions (%)</label>
+                                <div class="percent-input-wrapper">
+                                    <input type="number" id="buyerAgentCommissionsPercent" name="buyerAgentCommissionsPercent" step="0.5" min="0" value="3" oninput="updateAgentCommissions()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="listingAgentCommissionsPercent">Listing Agent Commissions (%)</label>
+                                <div class="percent-input-wrapper">
+                                    <input type="number" id="listingAgentCommissionsPercent" name="listingAgentCommissionsPercent" step="0.5" min="0" value="3" oninput="updateListingAgentCommissions()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="totalAgentCommissions">Agent Commissions ($)</label>
+                                <input type="text" id="totalAgentCommissions" name="totalAgentCommissions" oninput="updateTotalAcquisitionExpenses(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                        </div>
+                        <!-- Row 3: Buffer (%), Buffer ($), Blank -->
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="bufferPercent">Buffer (%)</label>
+                                <div class="percent-input-wrapper">
+                                    <input type="number" id="bufferPercent" name="bufferPercent" step="0.5" min="0" value="2" oninput="updateBuffer()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="buffer">Buffer ($)</label>
+                                <input type="text" id="buffer" name="buffer" oninput="setBufferManuallyEdited(); updateTotalAcquisitionExpenses(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <!-- Row 4: Total Repairs, Additional, Blank -->
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="repairsOffer">Total Repairs</label>
+                                <input type="text" id="repairsOffer" name="repairsOffer" oninput="updateTotalAcquisitionExpenses(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group">
+                                <label for="additional">Additional</label>
+                                <input type="text" id="additional" name="additional" oninput="updateTotalAcquisitionExpenses(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <!-- Row 5: Total Acquisition Expenses, Blank, Blank -->
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="totalAcquisitionExpenses">Total Acquisition Expenses</label>
+                                <input type="text" id="totalAcquisitionExpenses" name="totalAcquisitionExpenses" oninput="setTotalAcquisitionExpensesManuallyEdited(); updateMAO()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Dispo Section -->
+                    <fieldset class="section-card">
+                        <legend>Dispo</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="mao">MAO</label>
+                                <input type="text" id="mao" name="mao" readonly onblur="formatInputCurrency(this)">
+                                <div id="maoMessage" class="mao-message"></div>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="contractedPrice">Contracted Price *</label>
+                                <input type="text" id="contractedPrice" name="contractedPrice" required oninput="setContractedPriceManuallyEdited(); updateDispoFields()" onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group">
+                                <label for="assignmentFee">Assignment Fee</label>
+                                <input type="text" id="assignmentFee" name="assignmentFee" readonly onblur="formatInputCurrency(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="jvSplit">JV Split (%) *</label>
+                                <select id="jvSplit" name="jvSplit" required onchange="updateYourAssignmentFee()">
+                                    <option value=""></option>
+                                    <option value="100/0" selected>100/0</option>
+                                    <option value="90/10">90/10</option>
+                                    <option value="80/20">80/20</option>
+                                    <option value="70/30">70/30</option>
+                                    <option value="60/40">60/40</option>
+                                    <option value="50/50">50/50</option>
+                                    <option value="40/60">40/60</option>
+                                    <option value="30/70">30/70</option>
+                                    <option value="20/80">20/80</option>
+                                    <option value="10/90">10/90</option>
+                                    <option value="0/100">0/100</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="yourAssignmentFee">Net Assignment Fee</label>
+                                <input type="text" id="yourAssignmentFee" name="yourAssignmentFee" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F7F9FB;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #FFFFFF;
+            padding: 24px;
+            color: #000000;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 16px;
+            color: #000000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #F1F3F5;
+            color: #000000;
+        }
+
+        .sidebar a.active {
+            background-color: #FFCC00;
+            color: #FFFFFF;
+        }
+
+        .sidebar a.cash,
+        .sidebar a.creative {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFCC00;
+            margin: 16px 0 8px;
+            padding: 8px 16px;
+            pointer-events: none;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 200px;
+            padding: 32px 0;
+            background-color: #F7F9FB;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-left: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1D2939;
+        }
+
+        .tab-content {
+            background: #FAFAFB;
+            padding: 24px;
+            max-width: 900px;
+            margin: 0 0 0 24px;
+            border-radius: 6px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .section-card {
+            margin-bottom: 24px;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+        }
+
+        legend {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1D2939;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border: 1px solid #E4E7EC;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            min-width: 150px; /* Consistent width for alignment */
+            flex: 1; /* Allow form groups to grow evenly */
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #344054;
+            margin-bottom: 6px;
+            line-height: 1.4; /* Ensure consistent label height */
+            white-space: nowrap; /* Prevent label wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Handle long labels gracefully */
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            max-width: 200px;
+            padding: 10px 12px;
+            border: 1px solid #D0D5DD;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #FFFFFF;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            border-color: #F6C107;
+            box-shadow: 0 0 0 3px rgba(246, 193, 7, 0.1);
+            outline: none;
+        }
+
+        .form-group input[readonly] {
+            background-color: #FFFFFF;
+            border: 2px solid #d5d8dc;
+            cursor: not-allowed;
+        }
+
+        .form-group #address {
+            max-width: 400px;
+            width: 200%;
+        }
+
+        .form-group .percent-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 100px;
+        }
+
+        .form-group .percent-input-wrapper input {
+            padding-right: 24px;
+        }
+
+        .form-group .percent-input-wrapper::after {
+            content: '%';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667085;
+            font-size: 14px;
+        }
+
+        /* WebKit browsers (Chrome, Safari) spinner styles */
+        .form-group .percent-input-wrapper input[type="number"]::-webkit-inner-spin-button,
+        .form-group .percent-input-wrapper input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: inner-spin-button;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .form-group .percent-input-wrapper:hover input[type="number"]::-webkit-inner-spin-button,
+        .form-group .percent-input-wrapper:hover input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+
+        /* Firefox spinner styles */
+        .form-group .percent-input-wrapper input[type="number"] {
+            -moz-appearance: textfield;
+            position: relative;
+        }
+
+        .form-group .percent-input-wrapper:hover input[type="number"] {
+            -moz-appearance: number-input;
+        }
+
+        select {
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 12px center;
+            background-size: 16px;
+        }
+
+        .mao-message {
+            font-size: 11px;
+            margin-top: 5px;
+            font-weight: 500;
+            font-style: italic;
+            color: inherit;
+        }
+
+        .property-info-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .property-details-section .property-info-row {
+            gap: 10px;
+        }
+
+        .property-info-row.tight-row {
+            gap: 16px; /* Consistent spacing for neat alignment */
+            justify-content: space-between; /* Evenly distribute fields */
+            align-items: flex-start; /* Align tops of fields for consistency */
+        }
+
+        .positive {
+            background-color: #D1FADF !important;
+        }
+
+        .negative {
+            background-color: #FEE4E2 !important;
+        }
+
+        .zero {
+            background-color: #E4E7EC !important;
+        }
+
+        .blank {
+            background-color: #FFFFFF !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 160px;
+            }
+
+            .main-content {
+                margin-left: 160px;
+                padding: 16px 0;
+            }
+
+            .header {
+                padding-left: 16px;
+            }
+
+            .tab-content {
+                margin: 0 0 0 16px;
+            }
+
+            .property-info-row {
+                flex-direction: column;
+                gap: 12px; /* Tighter spacing for mobile */
+            }
+
+            .property-info-row.tight-row {
+                gap: 12px;
+                justify-content: flex-start; /* Stack fields neatly on mobile */
+            }
+
+            .form-group {
+                min-width: 100%; /* Full width on mobile */
+                max-width: 100%;
+                flex: none; /* Prevent flex growth on mobile */
+            }
+
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group select {
+                max-width: 100%;
+            }
+
+            .form-group #address {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        // Format number as currency ($X,XXX,XXX)
+        function formatCurrency(value) {
+            if (isNaN(value) || value === 0) return '';
+            return `$${Math.round(value).toLocaleString()}`;
+        }
+
+        // Format input field value as currency on blur
+        function formatInputCurrency(input) {
+            let value = parseFloat(input.value.replace(/[$,]/g, '')) || 0;
+            input.value = formatCurrency(value);
+        }
+
+        // Flags to track manual edits
+        let bufferManuallyEdited = false;
+        let contractedPriceManuallyEdited = false;
+        let totalAcquisitionExpensesManuallyEdited = false;
+
+        function setBufferManuallyEdited() {
+            bufferManuallyEdited = true;
+        }
+
+        function setContractedPriceManuallyEdited() {
+            contractedPriceManuallyEdited = true;
+        }
+
+        function setTotalAcquisitionExpensesManuallyEdited() {
+            totalAcquisitionExpensesManuallyEdited = true;
+        }
+
+        function updateTotalAcquisitionExpenses() {
+            if (!totalAcquisitionExpensesManuallyEdited) {
+                const totalClosingCosts = parseFloat(document.getElementById('totalClosingCosts').value.replace(/[$,]/g, '')) || 0;
+                const totalAgentCommissions = parseFloat(document.getElementById('totalAgentCommissions').value.replace(/[$,]/g, '')) || 0;
+                const buffer = parseFloat(document.getElementById('buffer').value.replace(/[$,]/g, '')) || 0;
+                const repairsOffer = parseFloat(document.getElementById('repairsOffer').value.replace(/[$,]/g, '')) || 0;
+                const additional = parseFloat(document.getElementById('additional').value.replace(/[$,]/g, '')) || 0;
+                const totalAcquisitionExpenses = totalClosingCosts + totalAgentCommissions + buffer + repairsOffer + additional;
+                document.getElementById('totalAcquisitionExpenses').value = formatCurrency(totalAcquisitionExpenses);
+            }
+        }
+
+        function updateClosingCostsOffer() {
+            const asIsValue = parseFloat(document.getElementById('asIsValue').value.replace(/[$,]/g, '')) || 0;
+            const closingCostsPercent = parseFloat(document.getElementById('closingCostsPercent').value) / 100 || 0;
+            const totalClosingCosts = asIsValue * closingCostsPercent;
+            document.getElementById('totalClosingCosts').value = formatCurrency(totalClosingCosts);
+            updateTotalAcquisitionExpenses();
+            updateMAO();
+        }
+
+        function updateAgentCommissions() {
+            const asIsValue = parseFloat(document.getElementById('asIsValue').value.replace(/[$,]/g, '')) || 0;
+            const buyerAgentCommissionsPercent = parseFloat(document.getElementById('buyerAgentCommissionsPercent').value) / 100 || 0;
+            const listingAgentCommissionsPercent = parseFloat(document.getElementById('listingAgentCommissionsPercent').value) / 100 || 0;
+            const totalAgentCommissions = asIsValue * (buyerAgentCommissionsPercent + listingAgentCommissionsPercent);
+            document.getElementById('totalAgentCommissions').value = formatCurrency(totalAgentCommissions);
+            updateTotalAcquisitionExpenses();
+            updateMAO();
+        }
+
+        function updateListingAgentCommissions() {
+            updateAgentCommissions();
+        }
+
+        function updateBuffer() {
+            const asIsValue = parseFloat(document.getElementById('asIsValue').value.replace(/[$,]/g, '')) || 0;
+            const bufferPercent = parseFloat(document.getElementById('bufferPercent').value) / 100 || 0;
+            if (!bufferManuallyEdited) {
+                const buffer = asIsValue * bufferPercent;
+                document.getElementById('buffer').value = formatCurrency(buffer);
+            }
+            updateTotalAcquisitionExpenses();
+            updateMAO();
+        }
+
+        function updateMAO() {
+            const asIsValue = parseFloat(document.getElementById('asIsValue').value.replace(/[$,]/g, '')) || 0;
+            const totalAcquisitionExpenses = parseFloat(document.getElementById('totalAcquisitionExpenses').value.replace(/[$,]/g, '')) || 0;
+            const mao = asIsValue - totalAcquisitionExpenses;
+            document.getElementById('mao').value = formatCurrency(mao);
+            updateDispoFields();
+            updateMaoMessage();
+        }
+
+        function updateMaoMessage() {
+            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value.replace(/[$,]/g, '')) || 0;
+            const mao = parseFloat(document.getElementById('mao').value.replace(/[$,]/g, '')) || 0;
+            const priceMaoPercent = purchasePrice ? (purchasePrice - mao) / purchasePrice : 0;
+            document.getElementById('priceMaoPercent').value = priceMaoPercent;
+
+            let message = '';
+            let color = '';
+            if (mao === purchasePrice && mao !== 0 && purchasePrice !== 0) {
+                message = `Property is Fairly Priced`;
+                color = '#000000'; // Black
+            } else if (priceMaoPercent > 0) {
+                message = `Property is Overpriced by ${Math.round(Math.abs(priceMaoPercent) * 100)}%`;
+                color = '#dc2626'; // Red
+            } else if (priceMaoPercent < 0) {
+                message = `Property is Underpriced by ${Math.round(Math.abs(priceMaoPercent) * 100)}%`;
+                color = '#008000'; // Green
+            }
+            const maoMessageElement = document.getElementById('maoMessage');
+            maoMessageElement.textContent = message;
+            maoMessageElement.style.color = color;
+        }
+
+        function updateDispoFields() {
+            const mao = parseFloat(document.getElementById('mao').value.replace(/[$,]/g, '')) || 0;
+            let contractedPrice;
+            if (!contractedPriceManuallyEdited) {
+                contractedPrice = mao - 20000; // Contracted Price = MAO - 20000
+                document.getElementById('contractedPrice').value = formatCurrency(contractedPrice);
+            } else {
+                contractedPrice = parseFloat(document.getElementById('contractedPrice').value.replace(/[$,]/g, '')) || 0;
+            }
+            const assignmentFee = mao - contractedPrice; // Desired Assignment Fee = MAO - Contracted Price
+            document.getElementById('assignmentFee').value = formatCurrency(assignmentFee);
+            updateYourAssignmentFee();
+        }
+
+        function updateYourAssignmentFee() {
+            const assignmentFee = parseFloat(document.getElementById('assignmentFee').value.replace(/[$,]/g, '')) || 0;
+            const jvSplit = document.getElementById('jvSplit').value ? parseFloat(document.getElementById('jvSplit').value.split('/')[0]) / 100 : 1;
+            const yourAssignmentFee = assignmentFee * jvSplit;
+            document.getElementById('yourAssignmentFee').value = formatCurrency(yourAssignmentFee);
+        }
+
+        function initializeCalculator() {
+            // Initialize Total Acquisition Expenses
+            updateTotalAcquisitionExpenses();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeCalculator);
+    </script>
+</body>
+</html>

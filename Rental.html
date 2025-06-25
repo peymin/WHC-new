@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'">
+        <title>Rental Wholesale Calculator</title>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="images/logo.jpg" alt="Wholesale Calculators Logo">
+            </div>
+            <div class="nav-section">
+                <a href="#" class="cash">Cash</a>
+                <a href="./index.html" class="nav-item active">Fix And Flip</a>
+                <a href="./Land.html" class="nav-item">Land</a>
+                <a href="./Rental.html" class="nav-item">Rental</a>
+            </div>
+            <div class="nav-section">
+                <a href="#" class="creative">Creative</a>
+                <a href="./Subject-To.html" class="nav-item">Subject To</a>
+                <a href="./Seller-Finance.html" class="nav-item">Seller Finance</a>
+                <a href="./Novation.html" class="nav-item">Novation</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Rental Wholesale Calculator</h1>
+            </div>
+            <div id="rental-wholesale" class="tab-content active">
+                <form id="calcForm">
+                    <!-- Property Information -->
+                    <fieldset class="section-card">
+                        <legend>Property Information</legend>
+                        <div class="property-info-row">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" required>
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row hidden">
+                            <div class="form-group">
+                                <label for="bedBathGarage">Bed / Bath / Garage</label>
+                                <input type="text" id="bedBathGarage" name="bedBathGarage" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="yearBuilt">Year Built</label>
+                                <input type="text" id="yearBuilt" name="yearBuilt" required>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="numUnits"># of Units *</label>
+                                <select id="numUnits" name="numUnits" required>
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="price">Asking Price *</label>
+                                <input type="text" id="price" name="price" required oninput="formatMoneyInput(this)">
+                            </div>
+                            <div class="form-group">
+                                <label for="rentPerUnit">Rent / Unit *</label>
+                                <input type="text" id="rentPerUnit" name="rentPerUnit" required oninput="formatMoneyInput(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Location & Market Content (No Title) -->
+                    <fieldset class="section-card">
+                        <div class="property-info-container">
+                            <div class="location-estimator">
+                                <fieldset class="inner-card">
+                                    <legend>Location Estimator</legend>
+                                    <div class="location-group">
+                                        <label>
+                                            <input type="checkbox" id="davyJonesLocker" name="locationCondition" value="davyJonesLocker" onclick="toggleCheckbox(this)">
+                                            <span>Bad Area</span>
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" id="quarterdeck" name="locationCondition" value="quarterdeck" onclick="toggleCheckbox(this)">
+                                            <span>Good Area</span>
+                                        </label>
+                                        <label>
+                                            <input type="checkbox" id="treasureIsland" name="locationCondition" value="treasureIsland" onclick="toggleCheckbox(this)">
+                                            <span>Best Area</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="RenttoValue">Rent To Value</label>
+                                        <div class="percent-input-wrapper">
+                                            <input type="number" id="RenttoValue" name="RenttoValue" step="0.5" min="0" value="1">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <div class="market-condition">
+                                <fieldset class="inner-card">
+                                    <legend>Market Condition</legend>
+                                    <div class="form-group">
+                                        <input type="range" id="marketCondition" name="marketCondition" min="0" max="100" step="50" value="50" oninput="updateLocationEstimate()">
+                                    </div>
+                                    <div class="emoji-container">
+                                        <span><img src="images/4.png" alt="Cold Market Icon" class="market-icon"><br>Cold Market</span>
+                                        <span><img src="images/5.png" alt="Neutral Market Icon" class="market-icon"><br>Neutral Market</span>
+                                        <span><img src="images/6.png" alt="Hot Market Icon" class="market-icon"><br>Hot Market</span>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Repair Estimator Section -->
+                    <fieldset class="section-card collapsible collapsed">
+                        <legend onclick="toggleCollapse(this.parentElement)">Repair Estimator</legend>
+                        <div class="collapsible-content">
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="sqft">Sq Ft (Per Unit) *</label>
+                                    <input type="number" id="sqft" name="sqft" step="any" required>
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="repair-checkbox-group">
+                                <label><input type="checkbox" id="smoothSailing" name="repairCondition" value="smoothSailing" onchange="updateRepairEstimates(this)"><span>Turnkey</span></label>
+                                <label><input type="checkbox" id="shiverMeTimbers" name="repairCondition" value="shiverMeTimbers" onchange="updateRepairEstimates(this)"><span>Light Rehab</span></label>
+                                <label><input type="checkbox" id="abandonShip" name="repairCondition" value="abandonShip" onchange="updateRepairEstimates(this)"><span>Medium Rehab</span></label>
+                                <label><input type="checkbox" id="burnTheShip" name="repairCondition" value="burnTheShip" onchange="updateRepairEstimates(this)"><span>Heavy Rehab</span></label>
+                            </div>
+                            <div class="sub-section">
+                                <div class="form-group">
+                                    <label for="repairCost">Cost / sq ft</label>
+                                    <input type="text" id="repairCost" name="repairCost" oninput="formatMoneyInput(this); updateRepairs()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="repairDays">Repair Days</label>
+                                    <input type="number" id="repairDays" name="repairDays" step="any">
+                                </div>
+                                <div class="form-group">
+                                    <label for="majorItems"># of Major Repair Items</label>
+                                    <select id="majorItems" name="majorItems" onchange="updateExtraField()">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                                <div id="extraField" class="form-group">
+                                    <label for="extraValue">Cost per Item</label>
+                                    <input type="text" id="extraValue" name="extraValue" value="$10,000" oninput="formatMoneyInput(this)">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="repairs">Repairs</label>
+                                <input type="text" id="repairs" name="repairs" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Operating Expenses Section -->
+                    <fieldset class="section-card">
+                        <legend>Operating Expenses</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="taxesMonthly">Taxes (monthly)</label>
+                                <input type="text" id="taxesMonthly" name="taxesMonthly" oninput="formatMoneyInput(this)">
+                            </div>
+                            <div class="form-group">
+                                <label for="insuranceMonthly">Insurance (monthly)</label>
+                                <input type="text" id="insuranceMonthly" name="insuranceMonthly" oninput="formatMoneyInput(this)">
+                            </div>
+                            <div class="form-group">
+                                <label for="additionalMonthly">Additional (monthly)</label>
+                                <input type="text" id="additionalMonthly" name="additionalMonthly" oninput="formatMoneyInput(this)">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="mao-iao-container">
+                        <div class="form-group">
+                            <label for="mao">MAO</label>
+                            <input type="text" id="mao" name="mao" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                            <span id="maoMessage" class="mao-message"></span>
+                        </div>
+                    </div>
+
+                    <!-- Dispo Section -->
+                    <fieldset class="section-card">
+                        <legend>Dispo</legend>
+                        <div class="dispo-container">
+                            <div class="form-group">
+                                <label for="contractedPrice">Contracted Price *</label>
+                                <input type="text" id="contractedPrice" name="contractedPrice" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                            </div>
+                            <div class="form-group">
+                                <label for="investorPrice">Investor Price *</label>
+                                <input type="text" id="investorPrice" name="investorPrice" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                            </div>
+                            <div class="form-group">
+                                <label for="assignmentFee">Assignment Fee *</label>
+                                <input type="text" id="assignmentFee" name="assignmentFee" readonly>
+                            </div>
+                        </div>
+                        <div class="dispo-row-2">
+                            <div class="form-group">
+                                <label for="jvSplit">JV Split (%) *</label>
+                                <select id="jvSplit" name="jvSplit">
+                                    <option value=""></option>
+                                    <option value="100/0" selected>100/0</option>
+                                    <option value="90/10">90/10</option>
+                                    <option value="80/20">80/20</option>
+                                    <option value="70/30">70/30</option>
+                                    <option value="60/40">60/40</option>
+                                    <option value="50/50">50/50</option>
+                                    <option value="40/60">40/60</option>
+                                    <option value="30/70">30/70</option>
+                                    <option value="20/80">20/80</option>
+                                    <option value="10/90">10/90</option>
+                                    <option value="0/100">0/100</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="yourAssignmentFee">Your Assignment Fee</label>
+                                <input type="text" id="yourAssignmentFee" name="yourAssignmentFee" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <div class="buttons-section">
+                        <button type="button" class="gold-button" id="fireAway" onclick="toggleHiddenSections()">Fire Away</button>
+                    </div>
+
+                    <fieldset id="costsSection" class="section-card hidden collapsible collapsed">
+                        <legend onclick="toggleCollapse(this.parentElement)">Costs</legend>
+                        <div class="collapsible-content">
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="closingCostsBuyPercent">Closing Costs Buy (%)</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="closingCostsBuyPercent" name="closingCostsBuyPercent" value="2" step="0.5" min="0">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="closingCostsDollars">Closing Costs ($)</label>
+                                    <input type="text" id="closingCostsDollars" name="closingCostsDollars" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="agentCommissionsDollars">Realtor Commission</label>
+                                    <input type="text" id="agentCommissionsDollars" name="agentCommissionsDollars" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                                </div>
+                                <div class="form-group"></div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="holdingPeriodDays">Holding Period (Days)</label>
+                                    <input type="number" id="holdingPeriodDays" name="holdingPeriodDays" step="any">
+                                </div>
+                                <div class="form-group">
+                                    <label for="holdingCostsDollars">Holding Costs ($)</label>
+                                    <input type="text" id="holdingCostsDollars" name="holdingCostsDollars" oninput="formatMoneyInput(this); this.dataset.userEdited=true">
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="totalCosts">Total Costs</label>
+                                    <input type="text" id="totalCosts" name="totalCosts" readonly>
+                                </div>
+                                <div class="form-group"></div>
+                                <div class="form-group"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="bootySection" class="section-card hidden">
+                        <legend>Buyer's Booty</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="bootyCashFlow">Cash Flow</label>
+                                <input type="text" id="bootyCashFlow" name="bootyCashFlow" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="bootyAnnualCashFlow">Annual Cash Flow</label>
+                                <input type="text" id="bootyAnnualCashFlow" name="bootyAnnualCashFlow" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="bootyCapRate">Cap Rate</label>
+                                <div class="percent-input-wrapper">
+                                    <input type="number" id="bootyCapRate" name="bootyCapRate" step="0.5" min="0" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bootyCashReturn" id="CoC1">Cash on Cash Return</label>
+                                <div class="percent-input-wrapper">
+                                    <input type="number" id="bootyCashReturn" name="bootyCashReturn" step="0.5" min="0" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="profitSection" class="section-card hidden collapsible collapsed">
+                        <legend onclick="toggleCollapse(this.parentElement)">Pre-Assignment Profit</legend>
+                        <div class="collapsible-content">
+                            <div class="property-info-row tight-row hidden">
+                                <div class="form-group">
+                                    <label for="preAssignmentProfit">Profit</label>
+                                    <input type="text" id="preAssignmentProfit" name="preAssignmentProfit" readonly>
+                                </div>
+                                <div class="form-group"></div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="preAssignmentCashFlow">Annual Cash Flow</label>
+                                    <input type="text" id="preAssignmentCashFlow" name="preAssignmentCashFlow" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="preAssignmentCapRate">Cap Rate</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="preAssignmentCapRate" name="preAssignmentCapRate" step="0.5" min="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="preAssignmentCashReturn" id="CoC2">Cash on Cash Return</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="preAssignmentCashReturn" name="preAssignmentCashReturn" step="0.5" min="0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="property-info-row tight-row hidden">
+                                <div class="form-group">
+                                    <label for="overpriced">Overpriced</label>
+                                    <input type="text" id="overpriced" name="overpriced" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="x1">X1</label>
+                                    <input type="text" id="x1" name="x1" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rentToValue">rent to value</label>
+                                    <div class="percent-input-wrapper">
+                                        <input type="number" id="rentToValue" name="rentToValue" step="0.5" min="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="property-info-row tight-row hidden">
+                                <div class="form-group">
+                                    <label for="x2">X2</label>
+                                    <input type="text" id="x2" name="x2" readonly>
+                                </div>
+                                <div class="form-group"></div>
+                                <div class="form-group"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="section-card">
+                        <legend>Cash Scorecard</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="rentalScore">Rental Score</label>
+                                <input type="text" id="rentalScore" name="rentalScore" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F7F9FB;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #FFFFFF;
+            padding: 24px;
+            color: #000000;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 16px;
+            color: #000000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #F1F3F5;
+            color: #000000;
+        }
+
+        .sidebar a.active {
+            background-color: #FFCC00;
+            color: #FFFFFF;
+        }
+
+        .sidebar a.cash,
+        .sidebar a.creative {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFCC00;
+            margin: 16px 0 8px;
+            padding: 8px 16px;
+            pointer-events: none;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 200px;
+            padding: 32px 0;
+            background-color: #F7F9FB;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1D2939;
+            text-align: center;
+        }
+
+        .tab-content {
+            background: #FAFAFA;
+            padding: 24px;
+            border-radius: 6px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .section-card {
+            margin-bottom: 24px;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+        }
+
+        .inner-card {
+            background: #F9FAFB;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        legend {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1D2939;
+            margin-bottom: 16px;
+        }
+
+        fieldset.collapsible legend {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border: 1px solid #E4E7EC;
+            border-radius: 6px;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        fieldset.collapsible legend:hover {
+            background: #F1F3F5;
+        }
+
+        fieldset.collapsible legend::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            background: url('images/right-arrow.png') no-repeat center;
+            background-size: contain;
+            transition: transform 0.3s;
+        }
+
+        fieldset.collapsible:not(.collapsed) legend::before {
+            background: url('images/down-arrow.png') no-repeat center;
+            background-size: contain;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 16px;
+        }
+
+        fieldset.collapsible:not(.collapsed) .collapsible-content {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #344054;
+            margin-bottom: 6px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            max-width: 200px;
+            padding: 10px 12px;
+            border: 1px solid #D0D5DD;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #FFFFFF;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            border-color: #F6C107;
+            box-shadow: 0 0 0 3px rgba(246, 193, 7, 0.1);
+            outline: none;
+        }
+
+        .form-group input[readonly] {
+            background-color: #FFFFFF;
+            border: 2px solid #d5d8dc;
+            cursor: not-allowed;
+        }
+
+        /* Remove spinner for readonly number inputs */
+        .form-group input[readonly][type="number"] {
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        .form-group input[readonly][type="number"]::-webkit-inner-spin-button,
+        .form-group input[readonly][type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-group #address {
+            max-width: 400px;
+            width: 200%;
+        }
+
+        .form-group #repairCost {
+            border: 1px solid #D0D5DD;
+            cursor: text;
+        }
+
+        .form-group #repairCost:focus {
+            border-color: #F6C107;
+            box-shadow: 0 0 0 3px rgba(246, 193, 7, 0.1);
+            outline: none;
+        }
+
+        .positive {
+            background-color: #D4EDDA !important;
+        }
+
+        .negative {
+            background-color: #F8D7DA !important;
+        }
+
+        .zero {
+            background-color: #E2E3E5 !important;
+        }
+
+        .blank {
+            background-color: #FFFFFF !important;
+        }
+
+        .form-group .percent-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 100px;
+        }
+
+        .form-group .percent-input-wrapper input {
+            padding-right: 30px;
+            width: 100%;
+        }
+
+        .form-group .percent-input-wrapper::after {
+            content: '%';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .form-group input[type="number"]::-webkit-inner-spin-button,
+        .form-group input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+            margin-left: 5px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 16px;
+        }
+
+        .repair-checkbox-group,
+        .location-group {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            flex-wrap: nowrap;
+            margin-bottom: 16px;
+        }
+
+        .repair-checkbox-group label,
+        .location-group label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0;
+            min-width: 80px;
+        }
+
+        .repair-checkbox-group label span,
+        .location-group label span {
+            font-size: 12px;
+            color: #344054;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #cacfd2;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            background-color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #F6C107;
+            border-color: #F6C107;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            width: 6px;
+            height: 10px;
+            border: solid #FFFFFF;
+            border-width: 0 2px 2px 0;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .sub-section {
+            padding: 16px;
+            background: #F9FAFB;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+
+        #extraField {
+            display: none;
+        }
+
+        select {
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 12px center;
+            background-size: 16px;
+        }
+
+        .property-info-container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .location-estimator,
+        .market-condition {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .market-condition input[type="range"] {
+            width: 100%;
+            max-width: 280px;
+            appearance: none;
+            height: 6px;
+            background: #D0D5DD;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .market-condition input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #F6C107;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .market-condition input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #F6C107;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .market-condition input[type="range"] {
+            accent-color: #F6C107;
+        }
+
+        .emoji-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 280px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .emoji-container span {
+            display: block;
+            font-size: 12px;
+            color: #344054;
+        }
+
+        .market-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .mao-iao-container,
+        .dispo-container,
+        .dispo-row-2,
+        .costs-container,
+        .booty-container,
+        .pre-assignment-profit-container,
+        .market-rent-details {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .mao-iao-container .form-group,
+        .dispo-container .form-group,
+        .dispo-row-2 .form-group,
+        .costs-container .form-group,
+        .booty-container .form-group,
+        .pre-assignment-profit-container .form-group,
+        .market-rent-details .form-group {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .property-info-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .property-info-row.tight-row {
+            gap: 12px;
+        }
+
+        .market-rent-spacing {
+            margin-top: 20px;
+        }
+
+        .buttons-section {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .gold-button {
+            background: linear-gradient(90deg, #F6C107 0%, #E6A700 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gold-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .gold-button:active {
+            transform: translateY(0);
+        }
+
+        .mao-message {
+            display: block;
+            font-size: 12px;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        .mao-message.overpriced {
+            color: #e53e3e;
+        }
+
+        .mao-message.underpriced {
+            color: #38a169;
+        }
+
+        .mao-message.fairly-priced {
+            color: #000000;
+        }
+
+        .gold-label {
+            background: linear-gradient(90deg, #F6C107 0%, #E6A700 100%);
+            color: #FFFFFF;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        fieldset.hidden {
+            display: none;
+        }
+
+        .form-group.hidden {
+            display: none;
+        }
+
+        .property-info-row.hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 160px;
+            }
+
+            .main-content {
+                margin-left: 160px;
+                padding: 16px 0;
+            }
+
+            .repair-checkbox-group,
+            .location-group {
+                flex-wrap: wrap;
+            }
+
+            .property-info-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group select {
+                max-width: 100%;
+            }
+
+            .form-group #address {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+
+    <script>
+        let isUpdating = false;
+        let hasUserInput = false;
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        const debouncedUpdateAllCalculations = debounce(() => {
+            if (!isUpdating && hasUserInput) {
+                updateAllCalculations();
+            }
+        }, 100);
+
+        function formatMoneyInput(input) {
+            try {
+                let value = input.value.replace(/[$,]/g, '');
+                let numValue = parseFloat(value);
+                if (!isNaN(numValue)) {
+                    input.value = `$${Math.ceil(numValue).toLocaleString()}`;
+                } else {
+                    input.value = value;
+                }
+            } catch (error) {
+                console.error('Error in formatMoneyInput:', error);
+            }
+        }
+
+        function toggleCollapse(fieldset) {
+            try {
+                console.log('Toggling collapse for:', fieldset.querySelector('legend').textContent);
+                fieldset.classList.toggle('collapsed');
+                const content = fieldset.querySelector('.collapsible-content');
+                if (content) {
+                    content.style.display = fieldset.classList.contains('collapsed') ? 'none' : 'block';
+                }
+                if (hasUserInput) {
+                    debouncedUpdateAllCalculations();
+                }
+            } catch (error) {
+                console.error('Error in toggleCollapse:', error);
+            }
+        }
+
+        function toggleHiddenSections() {
+            try {
+                console.log('Fire Away clicked');
+                const costsSection = document.getElementById('costsSection');
+                const bootySection = document.getElementById('bootySection');
+                const profitSection = document.getElementById('profitSection');
+
+                costsSection.classList.toggle('hidden');
+                bootySection.classList.toggle('hidden');
+                profitSection.classList.toggle('hidden');
+
+                if (hasUserInput) {
+                    debouncedUpdateAllCalculations();
+                }
+            } catch (error) {
+                console.error('Error in toggleHiddenSections:', error);
+            }
+        }
+
+        function toggleCheckbox(checkbox) {
+            try {
+                hasUserInput = true;
+                const checkboxes = document.querySelectorAll('input[name="locationCondition"]');
+                if (checkbox.checked) {
+                    checkboxes.forEach(cb => {
+                        if (cb !== checkbox) cb.checked = false;
+                    });
+                }
+                updateLocationEstimate();
+            } catch (error) {
+                console.error('Error in toggleCheckbox:', error);
+            }
+        }
+
+        function updateLocationEstimate() {
+            try {
+                if (!hasUserInput) return;
+                const rentToValue = document.getElementById('RenttoValue');
+                const marketCondition = parseInt(document.getElementById('marketCondition').value);
+                const selectedCheckbox = document.querySelector('input[name="locationCondition"]:checked');
+
+                if (!selectedCheckbox) {
+                    rentToValue.value = 1;
+                    updateMAO();
+                    return;
+                }
+
+                let finalPercent = 0;
+                switch (selectedCheckbox.value) {
+                    case 'davyJonesLocker':
+                        if (marketCondition === 0) finalPercent = 2;
+                        else if (marketCondition === 50) finalPercent = 1.5;
+                        else if (marketCondition === 100) finalPercent = 1;
+                        break;
+                    case 'quarterdeck':
+                        if (marketCondition === 0) finalPercent = 1.5;
+                        else if (marketCondition === 50) finalPercent = 1;
+                        else if (marketCondition === 100) finalPercent = 0.75;
+                        break;
+                    case 'treasureIsland':
+                        if (marketCondition === 0) finalPercent = 1;
+                        else if (marketCondition === 50) finalPercent = 0.75;
+                        else if (marketCondition === 100) finalPercent = 0.5;
+                        break;
+                }
+
+                rentToValue.value = Math.ceil(finalPercent);
+                updateMAO();
+            } catch (error) {
+                console.error('Error in updateLocationEstimate:', error);
+            }
+        }
+
+        function updateRepairEstimates(checkbox) {
+            try {
+                hasUserInput = true;
+                console.log(`updateRepairEstimates triggered by: ${checkbox.id}, checked: ${checkbox.checked}`);
+                const checkboxes = document.querySelectorAll('input[name="repairCondition"]');
+                const repairCost = document.getElementById('repairCost');
+                const repairDays = document.getElementById('repairDays');
+                const repairsInput = document.getElementById('repairs');
+
+                checkboxes.forEach(cb => {
+                    if (cb !== checkbox) cb.checked = false;
+                });
+
+                if (checkbox.checked) {
+                    switch (checkbox.value) {
+                        case 'smoothSailing':
+                            repairCost.value = '$20';
+                            repairDays.value = '15';
+                            break;
+                        case 'shiverMeTimbers':
+                            repairCost.value = '$30';
+                            repairDays.value = '30';
+                            break;
+                        case 'abandonShip':
+                            repairCost.value = '$40';
+                            repairDays.value = '60';
+                            break;
+                        case 'burnTheShip':
+                            repairCost.value = '$50';
+                            repairDays.value = '90';
+                            break;
+                        default:
+                            repairCost.value = '';
+                            repairDays.value = '';
+                            break;
+                    }
+                } else {
+                    repairCost.value = '';
+                    repairDays.value = '';
+                }
+
+                repairsInput.dataset.userEdited = false;
+                console.log('updateRepairEstimates: reset repairs.dataset.userEdited to false');
+                updateRepairs();
+                updateHoldingDays();
+                updateHoldingCosts();
+                debouncedUpdateAllCalculations();
+            } catch (error) {
+                console.error('Error in updateRepairEstimates:', error);
+            }
+        }
+
+        function updateRepairs() {
+            try {
+                if (!hasUserInput) return;
+                const repairsInput = document.getElementById('repairs');
+                if (repairsInput.dataset.userEdited === 'true') {
+                    console.log('Repairs not updated: userEdited is true');
+                    return;
+                }
+
+                const sqft = parseFloat(document.getElementById('sqft').value) || 0;
+                const numUnits = parseFloat(document.getElementById('numUnits').value) || 1;
+                const majorItems = parseInt(document.getElementById('majorItems').value) || 0;
+                const extraValueInput = document.getElementById('extraValue').value.replace(/[$,]/g, '');
+                const extraValue = parseFloat(extraValueInput) || 10000;
+                const repairCostInput = document.getElementById('repairCost').value.replace(/[$,]/g, '');
+                const conditionValue = parseFloat(repairCostInput) || 0;
+
+                const unitFactor = 1 + 0.5 * (numUnits - 1);
+                const baseRepairs = conditionValue * sqft * unitFactor;
+                const majorRepairs = majorItems * extraValue;
+                const totalRepairs = baseRepairs + majorRepairs;
+
+                console.log(`updateRepairs: conditionValue=${conditionValue}, sqft=${sqft}, numUnits=${numUnits}, unitFactor=${unitFactor}, majorItems=${majorItems}, extraValue=${extraValue}, baseRepairs=${baseRepairs}, majorRepairs=${majorRepairs}, totalRepairs=${totalRepairs}`);
+
+                repairsInput.value = !isNaN(totalRepairs) ? `$${Math.ceil(totalRepairs).toLocaleString()}` : '';
+
+                updateMAO();
+            } catch (error) {
+                console.error('Error in updateRepairs:', error);
+            }
+        }
+
+        function updateExtraField() {
+            try {
+                hasUserInput = true;
+                const majorItems = document.getElementById('majorItems').value;
+                document.getElementById('extraField').style.display = majorItems > 0 ? 'block' : 'none';
+                document.getElementById('repairs').dataset.userEdited = false;
+                console.log('updateExtraField: reset repairs.dataset.userEdited to false');
+                updateRepairs();
+            } catch (error) {
+                console.error('Error in updateExtraField:', error);
+            }
+        }
+
+        function updateHoldingDays() {
+            try {
+                if (!hasUserInput) return;
+                const holdingDaysInput = document.getElementById('holdingPeriodDays');
+                const repairDays = parseFloat(document.getElementById('repairDays').value) || 0;
+
+                if (holdingDaysInput.dataset.userEdited === 'true') {
+                    console.log('Holding days not updated: userEdited is true');
+                    return;
+                }
+
+                const isRepairConditionSelected = document.querySelector('input[name="repairCondition"]:checked');
+                let holdingDays = '';
+                if (isRepairConditionSelected && repairDays > 0) {
+                    holdingDays = repairDays + 90;
+                }
+
+                holdingDaysInput.value = holdingDays !== '' ? Math.ceil(holdingDays) : '';
+                updateHoldingCosts();
+            } catch (error) {
+                console.error('Error in updateHoldingDays:', error);
+            }
+        }
+
+        function updateHoldingCosts() {
+            try {
+                if (!hasUserInput) return;
+                const holdingCostsInput = document.getElementById('holdingCostsDollars');
+                if (holdingCostsInput.dataset.userEdited && holdingCostsInput.value !== '') return;
+
+                const investorPrice = parseFloat(document.getElementById('investorPrice').value.replace(/[$,]/g, '')) || 0;
+                const holdingDays = parseFloat(document.getElementById('holdingPeriodDays').value) || 0;
+                const taxesMonthly = parseFloat(document.getElementById('taxesMonthly').value.replace(/[$,]/g, '')) || 0;
+                const insuranceMonthly = parseFloat(document.getElementById('insuranceMonthly').value.replace(/[$,]/g, '')) || 0;
+
+                const holdingCosts = (holdingDays / 30 / 100 * investorPrice) + (holdingDays / 30 * (taxesMonthly + insuranceMonthly));
+                holdingCostsInput.value = !isNaN(holdingCosts) ? `$${Math.ceil(holdingCosts).toLocaleString()}` : '';
+                debouncedUpdateAllCalculations();
+            } catch (error) {
+                console.error('Error in updateHoldingCosts:', error);
+            }
+        }
+
+        function updateMAO() {
+            try {
+                if (!hasUserInput) return;
+                const maoInput = document.getElementById('mao');
+                const price = parseFloat(document.getElementById('price').value.replace(/[$,]/g, '')) || 0;
+                const rentPerUnit = parseFloat(document.getElementById('rentPerUnit').value.replace(/[$,]/g, '')) || 0;
+                const numUnits = parseFloat(document.getElementById('numUnits').value) || 1;
+                const rentToValue = parseFloat(document.getElementById('RenttoValue').value) / 100 || 0.01;
+                const repairs = parseFloat(document.getElementById('repairs').value.replace(/[$,]/g, '')) || 0;
+                const maoMessage = document.getElementById('maoMessage');
+
+                if (maoInput.dataset.userEdited !== 'true') {
+                    if (rentPerUnit && numUnits && rentToValue) {
+                        const mao = ((rentPerUnit * numUnits) / rentToValue) - repairs;
+                        maoInput.value = !isNaN(mao) ? `$${Math.ceil(mao).toLocaleString()}` : '$';
+                    } else {
+                        maoInput.value = '';
+                    }
+                }
+
+                const mao = parseFloat(maoInput.value.replace(/[$,]/g, '')) || 0;
+                const overpricedPercent = mao ? ((price - mao) / mao) * 100 : 0;
+                let message = '';
+                let statusClass = '';
+                if (mao === price && mao !== 0) {
+                    message = 'Property is Fairly Priced';
+                    statusClass = 'fairly-priced';
+                } else if (overpricedPercent > 0) {
+                    message = `Property is Overpriced by ${Math.abs(Math.ceil(overpricedPercent))}%`;
+                    statusClass = 'overpriced';
+                } else if (overpricedPercent < 0) {
+                    message = `Property is Underpriced by ${Math.abs(Math.ceil(overpricedPercent))}%`;
+                    statusClass = 'underpriced';
+                }
+                maoMessage.textContent = message;
+                maoMessage.className = `mao-message ${statusClass}`;
+
+                updateDispoFields();
+            } catch (error) {
+                console.error('Error in updateMAO:', error);
+            }
+        }
+
+        function updateDispoFields() {
+            try {
+                if (!hasUserInput) return;
+                const mao = parseFloat(document.getElementById('mao').value.replace(/[$,]/g, '')) || 0;
+                const contractedPriceField = document.getElementById('contractedPrice');
+                const investorPriceField = document.getElementById('investorPrice');
+                const assignmentFeeField = document.getElementById('assignmentFee');
+
+                let contractedPrice = parseFloat(contractedPriceField.value.replace(/[$,]/g, '')) || 0;
+                let investorPrice = parseFloat(investorPriceField.value.replace(/[$,]/g, '')) || 0;
+
+                if (contractedPriceField.dataset.userEdited !== 'true') {
+                    contractedPrice = mao - 20000;
+                }
+
+                if (investorPriceField.dataset.userEdited !== 'true') {
+                    investorPrice = mao;
+                }
+
+                const assignmentFee = investorPrice - contractedPrice;
+
+                contractedPriceField.value = !isNaN(contractedPrice) ? `$${Math.ceil(contractedPrice).toLocaleString()}` : '';
+                investorPriceField.value = !isNaN(investorPrice) ? `$${Math.ceil(investorPrice).toLocaleString()}` : '';
+                assignmentFeeField.value = !isNaN(assignmentFee) ? `$${Math.ceil(assignmentFee).toLocaleString()}` : '';
+
+                updateYourAssignmentFee();
+                updateClosingCosts();
+                updateHoldingCosts();
+                debouncedUpdateAllCalculations();
+            } catch (error) {
+                console.error('Error in updateDispoFields:', error);
+            }
+        }
+
+        function updateYourAssignmentFee() {
+            try {
+                if (!hasUserInput) return;
+                const assignmentFee = parseFloat(document.getElementById('assignmentFee').value.replace(/[$,]/g, '')) || 0;
+                const jvSplit = document.getElementById('jvSplit').value ? document.getElementById('jvSplit').value.split('/')[0] / 100 : 1;
+                const yourFee = assignmentFee * jvSplit;
+                document.getElementById('yourAssignmentFee').value = !isNaN(yourFee) ? `$${Math.ceil(yourFee).toLocaleString()}` : '';
+            } catch (error) {
+                console.error('Error in updateYourAssignmentFee:', error);
+            }
+        }
+
+        function updateClosingCosts() {
+            try {
+                if (!hasUserInput) return;
+                const closingCostsDollars = document.getElementById('closingCostsDollars');
+                if (closingCostsDollars.dataset.userEdited && closingCostsDollars.value !== '') return;
+
+                const investorPrice = parseFloat(document.getElementById('investorPrice').value.replace(/[$,]/g, '')) || 0;
+                const closingCostsBuy = parseFloat(document.getElementById('closingCostsBuyPercent').value) / 100 || 0;
+
+                const closingCosts = investorPrice * closingCostsBuy;
+                closingCostsDollars.value = !isNaN(closingCosts) ? `$${Math.ceil(closingCosts).toLocaleString()}` : '';
+            } catch (error) {
+                console.error('Error in updateClosingCosts:', error);
+            }
+        }
+
+        function updateAgentCommissions() {
+            try {
+                if (!hasUserInput) return;
+
+                const agentCommissionsDollars = document.getElementById('agentCommissionsDollars');
+                if (agentCommissionsDollars.dataset.userEdited && agentCommissionsDollars.value !== '') return;
+
+                const rentPerUnit = parseFloat(document.getElementById('rentPerUnit').value.replace(/[$,]/g, '')) || 0;
+                const numUnits = parseFloat(document.getElementById('numUnits').value) || 1;
+
+                const agentCommissions = rentPerUnit * numUnits;
+
+                agentCommissionsDollars.value = !isNaN(agentCommissions) ? `$${Math.ceil(agentCommissions).toLocaleString()}` : '';
+            } catch (error) {
+                console.error('Error in updateAgentCommissions:', error);
+            }
+        }
+
+        function applyConditionalFormatting() {
+            try {
+                if (!hasUserInput) return;
+                const fields = [
+                    { id: 'bootyAnnualCashFlow', type: 'profit' },
+                    { id: 'bootyCapRate', type: 'roi' },
+                    { id: 'bootyCashReturn', type: 'roi' },
+                    { id: 'preAssignmentCashFlow', type: 'profit' },
+                    { id: 'preAssignmentCapRate', type: 'roi' },
+                    { id: 'preAssignmentCashReturn', type: 'roi' }
+                ];
+                fields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    const value = element.value.replace(/[$,%]/g, '');
+                    const numValue = parseFloat(value);
+
+                    element.classList.remove('positive', 'negative', 'zero', 'blank');
+
+                    if (!value || isNaN(numValue)) {
+                        element.classList.add('blank');
+                        return;
+                    }
+
+                    if (field.type === 'profit') {
+                        if (numValue > 5000) {
+                            element.classList.add('positive');
+                        } else if (numValue >= 0 && numValue <= 5000) {
+                            element.classList.add('zero');
+                        } else {
+                            element.classList.add('negative');
+                        }
+                    } else if (field.type === 'roi') {
+                        if (numValue > 10) {
+                            element.classList.add('positive');
+                        } else if (numValue >= 5 && numValue <= 10) {
+                            element.classList.add('zero');
+                        } else {
+                            element.classList.add('negative');
+                        }
+                    }
+                });
+
+                const preAssignmentProfit = document.getElementById('preAssignmentProfit');
+                const profitValue = parseFloat(preAssignmentProfit.value.replace(/[$,]/g, '')) || 0;
+                preAssignmentProfit.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (!preAssignmentProfit.value || isNaN(profitValue)) {
+                    preAssignmentProfit.classList.add('blank');
+                } else if (profitValue < 0) {
+                    preAssignmentProfit.classList.add('negative');
+                } else {
+                    preAssignmentProfit.classList.add('blank');
+                }
+            } catch (error) {
+                console.error('Error in applyConditionalFormatting:', error);
+            }
+        }
+
+        function calculateRentalScore(cashFlow, preAssignmentAnnualCashFlow, preAssignmentCapRate, preAssignmentCoc) {
+            try {
+                const requiredInputs = [
+                    document.getElementById('rentPerUnit').value,
+                    document.getElementById('price').value,
+                    document.getElementById('taxesMonthly').value,
+                    document.getElementById('insuranceMonthly').value,
+                    document.getElementById('additionalMonthly').value
+                ];
+                if (!hasUserInput || requiredInputs.every(input => input === '')) {
+                    return '';
+                }
+
+                let score = 0;
+
+                if (cashFlow >= 500) {
+                    score += 1;
+                }
+
+                if (preAssignmentAnnualCashFlow >= 6000) {
+                    score += 3;
+                } else if (preAssignmentAnnualCashFlow >= 0) {
+                    score += 1.5;
+                }
+
+                if (preAssignmentCapRate > 10) {
+                    score += 3;
+                } else if (preAssignmentCapRate >= 5) {
+                    score += 1.5;
+                }
+
+                if (preAssignmentCoc > 10) {
+                    score += 3;
+                } else if (preAssignmentCoc >= 5) {
+                    score += 1.5;
+                }
+
+                console.log(`Rental Score Inputs: cashFlow=${cashFlow}, preAssignmentAnnualCashFlow=${preAssignmentAnnualCashFlow}, preAssignmentCapRate=${preAssignmentCapRate}, preAssignmentCoc=${preAssignmentCoc}, score=${score}`);
+                const finalScore = Math.min(Math.ceil(score), 10);
+                return finalScore % 1 === 0 ? `${Math.floor(finalScore)}/10` : `${finalScore.toFixed(1)}/10`;
+            } catch (error) {
+                console.error('Error in calculateRentalScore:', error);
+                return '';
+            }
+        }
+
+        function updateAllCalculations() {
+            try {
+                if (!hasUserInput || isUpdating) return;
+                isUpdating = true;
+
+                updateRepairs();
+                updateAgentCommissions();
+                updateClosingCosts();
+                updateHoldingCosts();
+                updateMAO();
+                updateDispoFields();
+                updateYourAssignmentFee();
+
+                const rentPerUnit = parseFloat(document.getElementById('rentPerUnit').value.replace(/[$,]/g, '')) || 0;
+                const numUnits = parseFloat(document.getElementById('numUnits').value) || 1;
+                const taxesMonthly = parseFloat(document.getElementById('taxesMonthly').value.replace(/[$,]/g, '')) || 0;
+                const insuranceMonthly = parseFloat(document.getElementById('insuranceMonthly').value.replace(/[$,]/g, '')) || 0;
+                const additionalMonthly = parseFloat(document.getElementById('additionalMonthly').value.replace(/[$,]/g, '')) || 0;
+                const repairs = parseFloat(document.getElementById('repairs').value.replace(/[$,]/g, '')) || 0;
+                const closingCosts = parseFloat(document.getElementById('closingCostsDollars').value.replace(/[$,]/g, '')) || 0;
+                const agentCommissions = parseFloat(document.getElementById('agentCommissionsDollars').value.replace(/[$,]/g, '')) || 0;
+                const holdingCosts = parseFloat(document.getElementById('holdingCostsDollars').value.replace(/[$,]/g, '')) || 0;
+                const investorPrice = parseFloat(document.getElementById('investorPrice').value.replace(/[$,]/g, '')) || 0;
+                const contractedPrice = parseFloat(document.getElementById('contractedPrice').value.replace(/[$,]/g, '')) || 0;
+                const price = parseFloat(document.getElementById('price').value.replace(/[$,]/g, '')) || 0;
+                const mao = parseFloat(document.getElementById('mao').value.replace(/[$,]/g, '')) || 0;
+                const rentToValueInput = parseFloat(document.getElementById('RenttoValue').value) / 100 || 0;
+
+                const cashFlow = (rentPerUnit * numUnits) - taxesMonthly - insuranceMonthly - additionalMonthly;
+                document.getElementById('bootyCashFlow').value = `$${Math.ceil(cashFlow).toLocaleString()}`;
+                const annualCashFlow = cashFlow * 12;
+                document.getElementById('bootyAnnualCashFlow').value = `$${Math.ceil(annualCashFlow).toLocaleString()}`;
+                const capRate = investorPrice ? (annualCashFlow / investorPrice) * 100 : 0;
+                document.getElementById('bootyCapRate').value = Math.ceil(capRate);
+                const cocDenominator = investorPrice + repairs + closingCosts + agentCommissions + holdingCosts;
+                const coc = cocDenominator ? (annualCashFlow / cocDenominator) * 100 : 0;
+                document.getElementById('bootyCashReturn').value = Math.ceil(coc);
+                const totalCosts = holdingCosts + agentCommissions + closingCosts + repairs;
+                document.getElementById('totalCosts').value = !isNaN(totalCosts) ? `$${Math.ceil(totalCosts).toLocaleString()}` : '';
+
+                const profit = (rentPerUnit * numUnits) - taxesMonthly - insuranceMonthly;
+                document.getElementById('preAssignmentProfit').value = `$${Math.ceil(profit).toLocaleString()}`;
+                const preAssignmentAnnualCashFlow = profit * 12;
+                document.getElementById('preAssignmentCashFlow').value = `$${Math.ceil(preAssignmentAnnualCashFlow).toLocaleString()}`;
+                const preAssignmentCapRate = contractedPrice ? (preAssignmentAnnualCashFlow / contractedPrice) * 100 : 0;
+                document.getElementById('preAssignmentCapRate').value = Math.ceil(preAssignmentCapRate);
+                const preAssignmentCocDenominator = contractedPrice + repairs + closingCosts + agentCommissions + holdingCosts;
+                const preAssignmentCoc = preAssignmentCocDenominator ? (preAssignmentAnnualCashFlow / preAssignmentCocDenominator) * 100 : 0;
+                document.getElementById('preAssignmentCashReturn').value = Math.ceil(preAssignmentCoc);
+
+                const x1 = price / (rentPerUnit * numUnits * 12);
+                document.getElementById('x1').value = !isNaN(x1) ? Math.ceil(x1 * 100) / 100 : '';
+                const rentToValueDisplay = (rentPerUnit * numUnits * 12) / price;
+                if (!document.getElementById('rentToValue').dataset.userEdited) {
+                    document.getElementById('rentToValue').value = !isNaN(rentToValueDisplay) ? Math.ceil(rentToValueDisplay * 100) : '';
+                }
+                const x2 = (rentPerUnit * numUnits) / rentToValueInput;
+                document.getElementById('x2').value = !isNaN(x2) ? `$${Math.ceil(x2).toLocaleString()}` : '';
+                const overpriced = price - mao;
+                document.getElementById('overpriced').value = !isNaN(overpriced) ? `$${Math.ceil(overpriced).toLocaleString()}` : '';
+
+                const score = calculateRentalScore(Math.ceil(cashFlow), Math.ceil(preAssignmentAnnualCashFlow), parseFloat(document.getElementById('preAssignmentCapRate').value) || 0, parseFloat(document.getElementById('preAssignmentCashReturn').value) || 0);
+                document.getElementById('rentalScore').value = score;
+
+                applyConditionalFormatting();
+            } catch (error) {
+                console.error('Error in updateAllCalculations:', error);
+            } finally {
+                isUpdating = false;
+            }
+        }
+
+        function initializeCalculator() {
+            try {
+                document.getElementById('jvSplit').value = '100/0';
+                document.getElementById('closingCostsBuyPercent').value = '2';
+                document.getElementById('extraValue').value = '$10,000';
+                document.getElementById('majorItems').value = '0';
+                document.getElementById('RenttoValue').value = '1';
+                document.getElementById('numUnits').value = '1';
+
+                const fieldsToBlank = [
+                    'address', 'bedBathGarage', 'yearBuilt', 'price', 'rentPerUnit',
+                    'sqft', 'taxesMonthly', 'insuranceMonthly', 'additionalMonthly',
+                    'repairs', 'repairCost', 'repairDays', 'closingCostsDollars',
+                    'agentCommissionsDollars', 'holdingCostsDollars', 'holdingPeriodDays',
+                    'mao', 'contractedPrice', 'investorPrice', 'assignmentFee',
+                    'yourAssignmentFee', 'rentalScore', 'bootyCashFlow',
+                    'bootyAnnualCashFlow', 'bootyCapRate', 'bootyCashReturn',
+                    'preAssignmentProfit', 'preAssignmentCashFlow', 'preAssignmentCapRate',
+                    'preAssignmentCashReturn', 'overpriced', 'x1', 'rentToValue', 'x2',
+                    'totalCosts'
+                ];
+                fieldsToBlank.forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+
+                const userInputFields = [
+                    'address', 'bedBathGarage', 'yearBuilt', 'price', 'rentPerUnit',
+                    'sqft', 'taxesMonthly', 'insuranceMonthly', 'additionalMonthly',
+                    'repairs', 'repairCost', 'repairDays', 'closingCostsDollars',
+                    'agentCommissionsDollars', 'holdingCostsDollars', 'holdingPeriodDays',
+                    'mao', 'contractedPrice', 'investorPrice', 'numUnits',
+                    'RenttoValue', 'extraValue', 'closingCostsBuyPercent',
+                    'rentToValue'
+                ];
+                userInputFields.forEach(id => {
+                    const input = document.getElementById(id);
+                    if (input) {
+                        input.addEventListener('input', () => {
+                            hasUserInput = true;
+                            if (['price', 'rentPerUnit', 'repairs', 'repairCost', 'extraValue', 'taxesMonthly', 'insuranceMonthly', 'additionalMonthly', 'closingCostsDollars', 'agentCommissionsDollars', 'holdingCostsDollars', 'mao', 'contractedPrice', 'investorPrice'].includes(id)) {
+                                input.dataset.userEdited = true;
+                                formatMoneyInput(input);
+                                // Reset userEdited for readonly fields to ensure they repopulate
+                                ['bootyCapRate', 'bootyCashReturn', 'preAssignmentCapRate', 'preAssignmentCashReturn'].forEach(fieldId => {
+                                    document.getElementById(fieldId).dataset.userEdited = false;
+                                });
+                            } else if (['RenttoValue', 'closingCostsBuyPercent', 'rentToValue'].includes(id)) {
+                                input.dataset.userEdited = true;
+                            }
+                            if (['sqft', 'repairCost', 'extraValue'].includes(id)) {
+                                document.getElementById('repairs').dataset.userEdited = false;
+                            }
+                            debouncedUpdateAllCalculations();
+                        });
+                    }
+                });
+
+                ['numUnits', 'majorItems', 'jvSplit'].forEach(id => {
+                    const input = document.getElementById(id);
+                    if (input) {
+                        input.addEventListener('change', () => {
+                            hasUserInput = true;
+                            if (id === 'majorItems' || id === 'numUnits') {
+                                document.getElementById('repairs').dataset.userEdited = false;
+                                updateExtraField();
+                                // Reset userEdited for readonly fields to ensure they repopulate
+                                ['bootyCapRate', 'bootyCashReturn', 'preAssignmentCapRate', 'preAssignmentCashReturn'].forEach(fieldId => {
+                                    document.getElementById(fieldId).dataset.userEdited = false;
+                                });
+                            } else if (id === 'jvSplit') {
+                                updateYourAssignmentFee();
+                            }
+                            debouncedUpdateAllCalculations();
+                        });
+                    }
+                });
+
+                ['davyJonesLocker', 'quarterdeck', 'treasureIsland', 'smoothSailing', 'shiverMeTimbers', 'abandonShip', 'burnTheShip'].forEach(id => {
+                    const input = document.getElementById(id);
+                    if (input) {
+                        input.addEventListener('change', () => {
+                            hasUserInput = true;
+                            if (['smoothSailing', 'shiverMeTimbers', 'abandonShip', 'burnTheShip'].includes(id)) {
+                                updateRepairEstimates(input);
+                            } else {
+                                toggleCheckbox(input);
+                            }
+                        });
+                    }
+                });
+
+                document.getElementById('marketCondition').addEventListener('input', () => {
+                    hasUserInput = true;
+                    updateLocationEstimate();
+                });
+            } catch (error) {
+                console.error('Error in initializeCalculator:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeCalculator);
+    </script>
+</body>
+</html>

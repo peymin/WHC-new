@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Finance Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="images/logo.jpg" alt="Wholesale Calculators Logo">
+            </div>
+            <div class="nav-section">
+                <a href="#" class="cash">Cash</a>
+                <a href="./index.html" class="nav-item active">Fix And Flip</a>
+                <a href="./Land.html" class="nav-item">Land</a>
+                <a href="./Rental.html" class="nav-item">Rental</a>
+            </div>
+            <div class="nav-section">
+                <a href="#" class="creative">Creative</a>
+                <a href="./Subject-To.html" class="nav-item">Subject To</a>
+                <a href="./Seller-Finance.html" class="nav-item">Seller Finance</a>
+                <a href="./Novation.html" class="nav-item">Novation</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Seller Finance Calculator</h1>
+            </div>
+            <div id="seller-finance" class="tab-content active">
+                <form id="calcForm">
+                    <!-- Property Information -->
+                    <fieldset class="section-card">
+                        <legend>Property Information</legend>
+                        <div class="property-info-row">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" required>
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="purchasePrice">Purchase Price *</label>
+                                <input type="text" id="purchasePrice" name="purchasePrice" required oninput="updateLoanCalculations(); updateCalculations()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="fairMarketValue">As Is Value</label>
+                                <input type="text" id="fairMarketValue" name="fairMarketValue" required oninput="fairMarketValueModified = true; updateCalculations()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="rent">Rent *</label>
+                                <input type="text" id="rent" name="rent" required oninput="rentModified = true; updateCalculations()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Repair Estimator -->
+                    <fieldset class="section-card collapsible collapsed">
+                        <legend onclick="toggleCollapse(this.parentElement)">Repair Estimator</legend>
+                        <div class="collapsible-content">
+                            <div class="property-info-row tight-row">
+                                <div class="form-group">
+                                    <label for="sqft">Sq Ft *</label>
+                                    <input type="number" id="sqft" name="sqft" step="any" required oninput="updateRepairs()">
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="repair-checkbox-group">
+                                <label><input type="checkbox" id="smoothSailing" name="repairCondition" value="smoothSailing" onchange="updateRepairEstimates(this)"><span>Turnkey</span></label>
+                                <label><input type="checkbox" id="shiverMeTimbers" name="repairCondition" value="shiverMeTimbers" onchange="updateRepairEstimates(this)"><span>Light Rehab</span></label>
+                                <label><input type="checkbox" id="abandonShip" name="repairCondition" value="abandonShip" onchange="updateRepairEstimates(this)"><span>Medium Rehab</span></label>
+                                <label><input type="checkbox" id="burnTheShip" name="repairCondition" value="burnTheShip" onchange="updateRepairEstimates(this)"><span>Heavy Rehab</span></label>
+                            </div>
+                            <div class="sub-section">
+                                <div class="form-group">
+                                    <label for="repairCost">Cost / sq ft</label>
+                                    <input type="text" id="repairCost" name="repairCost" oninput="formatMoneyInput(this); updateRepairs()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                                </div>
+                                <div class="form-group">
+                                    <label for="repairDays">Repair Days</label>
+                                    <input type="number" id="repairDays" name="repairDays" step="any">
+                                </div>
+                                <div class="form-group">
+                                    <label for="majorItems"># of Major Repair Items</label>
+                                    <select id="majorItems" name="majorItems" onchange="updateExtraField(); updateRepairs()">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                                <div id="extraField" class="form-group">
+                                    <label for="extraValue">Cost per Item</label>
+                                    <input type="text" id="extraValue" name="extraValue" oninput="formatMoneyInput(this); updateRepairs()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Repairs Field -->
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="repairs">Repairs</label>
+                                <input type="text" id="repairs" name="repairs" oninput="formatMoneyInput(this); this.dataset.userEdited=true; updateCalculations()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Operating Expenses -->
+                    <fieldset class="section-card" id="operatingExpenses">
+                        <legend>Operating Expenses</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="taxes">Taxes (monthly) *</label>
+                                <input type="text" id="taxes" name="taxes" required oninput="updateOperatingExpenses()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="insurance">Insurance (monthly) *</label>
+                                <input type="text" id="insurance" name="insurance" required oninput="updateOperatingExpenses()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="additional">Additional (monthly)</label>
+                                <input type="text" id="additional" name="additional" oninput="updateOperatingExpenses()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="totalMonthlyOperatingExpenses">Total Expenses (monthly)</label>
+                                <input type="text" id="totalMonthlyOperatingExpenses" name="totalMonthlyOperatingExpenses" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group">
+                                <label for="mamo">MAMO</label>
+                                <input type="text" id="mamo" name="mamo" readonly>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Loan Information -->
+                    <fieldset class="section-card">
+                        <legend>Loan Information</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="downPayment">Down Payment</label>
+                                <input type="text" id="downPayment" name="downPayment" oninput="downPaymentModified = true; updateLoanCalculations()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="loanAmount">Loan Amount *</label>
+                                <input type="text" id="loanAmount" name="loanAmount" required oninput="handleLoanAmountInput(this); updateLoanCalculations()" onblur="validateLoanAmount(this)">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group percent-input-wrapper">
+                                <label for="rate">Rate (%) *</label>
+                                <input type="text" id="rate" name="rate" required oninput="updateLoanCalculations()" onblur="this.value = formatPercent(parseFloat(this.value.replace(/%/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="loanLength">Loan Length (years) *</label>
+                                <input type="number" id="loanLength" name="loanLength" required oninput="updateLoanCalculations()">
+                            </div>
+                            <div class="form-group">
+                                <label for="balloonInput">Balloon (years)</label>
+                                <input type="number" id="balloonInput" name="balloonInput" oninput="updateCalculations()">
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="monthlyPayment">Monthly Payment</label>
+                                <input type="text" id="monthlyPayment" name="monthlyPayment" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="cashFlow">Cash Flow</label>
+                                <input type="text" id="cashFlow" name="cashFlow" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Acquisition Expenses -->
+                    <fieldset class="section-card">
+                        <legend>Acquisition Expenses</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="agentFees">Agent Fees</label>
+                                <input type="text" id="agentFees" name="agentFees" oninput="updateAcquisitionExpenses()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="closingCosts">Closing Costs</label>
+                                <input type="text" id="closingCosts" name="closingCosts" oninput="updateAcquisitionExpenses()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                            <div class="form-group">
+                                <label for="additionalAcquisition">Additional</label>
+                                <input type="text" id="additionalAcquisition" name="additionalAcquisition" oninput="updateAcquisitionExpenses()" onblur="this.value = formatMoneyInput(parseFloat(this.value.replace(/[$,]/g, '')) || 0)">
+                            </div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="totalAcquisitionExpenses">Total Acquisition Expenses</label>
+                                <input type="text" id="totalAcquisitionExpenses" name="totalAcquisitionExpenses" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="entryFee">Entry Fee</label>
+                                <input type="text" id="entryFee" name="entryFee" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Fire Away Button -->
+                    <div class="buttons-section">
+                        <button type="button" class="gold-button" id="fireAwayButton" onclick="toggleResults()">Fire Away</button>
+                    </div>
+
+                    <!-- Buyer’s Booty -->
+                    <fieldset class="section-card results-section" style="display: none;">
+                        <legend>Buyer’s Booty</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="resultRate">Rate (%)</label>
+                                <input type="text" id="resultRate" name="resultRate" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="resultCashFlow">Cash Flow</label>
+                                <input type="text" id="resultCashFlow" name="resultCashFlow" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="cashOnCashReturn">Cash on Cash Return</label>
+                                <input type="text" id="cashOnCashReturn" name="cashOnCashReturn" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="entryFeePercent">Entry Fee (%)</label>
+                                <input type="text" id="entryFeePercent" name="entryFeePercent" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="instantEquity">Instant Equity</label>
+                                <input type="text" id="instantEquity" name="instantEquity" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="instantEquityPercent">Instant Equity (%)</label>
+                                <input type="text" id="instantEquityPercent" name="instantEquityPercent" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="balloonYears">Balloon (Years)</label>
+                                <input type="text" id="balloonYears" name="balloonYears" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Creative Scorecard -->
+                    <fieldset class="section-card scorecard-section" style="display: none;">
+                        <legend>Creative Scorecard</legend>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="score">Seller Finance Score</label>
+                                <input type="text" id="score" name="score" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div class="property-info-row tight-row">
+                            <div class="form-group">
+                                <label for="assignmentFeeEstimator">Assignment Fee Estimator</label>
+                                <input type="text" id="assignmentFeeEstimator" name="assignmentFeeEstimator" readonly>
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F7F9FB;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #FFFFFF;
+            padding: 24px;
+            color: #000000;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 16px;
+            color: #000000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #F1F3F5;
+            color: #000000;
+        }
+
+        .sidebar a.active {
+            background-color: #FFCC00;
+            color: #FFFFFF;
+        }
+
+        .sidebar a.cash,
+        .sidebar a.creative {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFCC00;
+            margin: 16px 0 8px;
+            padding: 8px 16px;
+            pointer-events: none;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 224px;
+            padding: 32px 0;
+            background-color: #F7F9FB;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1D2939;
+            text-align: center;
+        }
+
+        .tab-content {
+            background: #FAFAFA;
+            padding: 24px;
+            max-width: 1000px;
+            margin: 0 24px;
+            border-radius: 6px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .section-card {
+            margin-bottom: 24px;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+        }
+
+        legend {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1D2939;
+            margin-bottom: 16px;
+        }
+
+        fieldset.collapsible legend {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border: 1px solid #E4E7EC;
+            border-radius: 6px;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        fieldset.collapsible legend:hover {
+            background: #F1F3F5;
+        }
+
+        fieldset.collapsible legend::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            background: url('images/right-arrow.png') no-repeat center;
+            background-size: contain;
+            transition: transform 0.3s;
+        }
+
+        fieldset.collapsible:not(.collapsed) legend::before {
+            background: url('images/down-arrow.png') no-repeat center;
+            background-size: contain;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 16px;
+        }
+
+        fieldset.collapsible:not(.collapsed) .collapsible-content {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #344054;
+            margin-bottom: 6px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            max-width: 200px;
+            padding: 10px 12px;
+            border: 1px solid #D0D5DD;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #FFFFFF;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            border-color: #F6C107;
+            box-shadow: 0 0 0 3px rgba(246, 193, 7, 0.1);
+            outline: none;
+        }
+
+        .form-group input[readonly] {
+            background-color: #FFFFFF;
+            border: 2px solid #d5d8dc;
+            cursor: not-allowed;
+        }
+
+        .form-group #address {
+            max-width: 400px;
+            width: 200%;
+        }
+
+        .form-group #repairCost {
+            border: 1px solid #D0D5DD;
+            cursor: text;
+        }
+
+        .form-group #repairCost:focus {
+            border-color: #F6C107;
+            box-shadow: 0 0 0 3px rgba(246, 193, 7, 0.1);
+            outline: none;
+        }
+
+        .form-group .percent-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 100px;
+        }
+
+        .form-group .percent-input-wrapper input {
+            padding-right: 24px;
+        }
+
+        .form-group .percent-input-wrapper::after {
+            content: '%';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 16px;
+        }
+
+        .repair-checkbox-group {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            flex-wrap: nowrap;
+            margin-bottom: 16px;
+        }
+
+        .repair-checkbox-group label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0;
+            min-width: 80px;
+        }
+
+        .repair-checkbox-group label span {
+            font-size: 12px;
+            color: #344054;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #cacfd2;
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+            cursor: pointer;
+            background-color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #F6C107;
+            border-color: #F6C107;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            width: 6px;
+            height: 10px;
+            border: solid #FFFFFF;
+            border-width: 0 2px 2px 0;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .sub-section {
+            padding: 16px;
+            background: #F9FAFB;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+
+        select {
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 12px center;
+            background-size: 16px;
+        }
+
+        .property-info-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .property-info-row.tight-row {
+            gap: 12px;
+        }
+
+        .buttons-section {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .gold-button {
+            background: linear-gradient(90deg, #F6C107 0%, #E6A700 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gold-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .gold-button:active {
+            transform: translateY(0);
+        }
+
+        .positive {
+            background-color: #D4EDDA !important;
+        }
+
+        .negative {
+            background-color: #F8D7DA !important;
+        }
+
+        .zero {
+            background-color: #E2E3E5 !important;
+        }
+
+        .blank {
+            background-color: #FFFFFF !important;
+        }
+
+        #extraField {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 160px;
+            }
+
+            .main-content {
+                margin-left: 184px;
+                padding: 16px 0;
+            }
+
+            .tab-content {
+                margin: 0 16px;
+            }
+
+            .repair-checkbox-group {
+                flex-wrap: wrap;
+            }
+
+            .property-info-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group select {
+                max-width: 100%;
+            }
+
+            .form-group #address {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+
+    <script>
+        let rentModified = false;
+        let fairMarketValueModified = false;
+        let loanAmountModified = false;
+        let downPaymentModified = false;
+
+        function formatMoney(value, isCalculationField = false) {
+            if (value === null || isNaN(value)) return '$0';
+            const absValue = isCalculationField ? Math.ceil(Math.abs(value)) : Math.abs(value);
+            const decimals = isCalculationField ? 0 : 2;
+            const formatted = absValue.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+            return value < 0 ? `-${'$'}${formatted}` : `$${formatted}`;
+        }
+
+        function formatMoneyInput(value) {
+            if (value === null || isNaN(value)) return '$0';
+            const absValue = Math.abs(value);
+            const formatted = absValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+            return value < 0 ? `-${'$'}${formatted}` : `$${formatted}`;
+        }
+
+        function formatPercent(value, noDecimals = false) {
+            if (value === null || isNaN(value)) return '0%';
+            const roundedValue = noDecimals ? Math.ceil(value) : value;
+            const decimals = noDecimals ? 0 : 2;
+            return `${roundedValue.toFixed(decimals)}%`;
+        }
+
+        function formatInput(input) {
+            try {
+                let value = input.value.replace(/[$,]/g, '');
+                let numValue = parseFloat(value);
+                if (!isNaN(numValue) && numValue >= 0) {
+                    input.value = formatMoneyInput(numValue);
+                } else {
+                    input.value = value;
+                }
+            } catch (error) {
+                console.error('Error in formatInput:', error);
+            }
+        }
+
+        function handleLoanAmountInput(input) {
+            const value = input.value.replace(/[$,]/g, '');
+            if (value === '' || !isNaN(parseFloat(value))) {
+                loanAmountModified = true;
+            }
+        }
+
+        function validateLoanAmount(input) {
+            const value = parseFloat(input.value.replace(/[$,]/g, '')) || 0;
+            input.value = formatMoneyInput(value);
+        }
+
+        function toggleCollapse(fieldset) {
+            try {
+                fieldset.classList.toggle('collapsed');
+                const content = fieldset.querySelector('.collapsible-content');
+                if (content) {
+                    content.style.display = fieldset.classList.contains('collapsed') ? 'none' : 'block';
+                }
+            } catch (error) {
+                console.error('Error in toggleCollapse:', error);
+            }
+        }
+
+        function toggleResults() {
+            try {
+                const resultsSection = document.querySelector('.results-section');
+                const scorecardSection = document.querySelector('.scorecard-section');
+                const isHidden = resultsSection.style.display === 'none';
+                resultsSection.style.display = isHidden ? 'block' : 'none';
+                scorecardSection.style.display = isHidden ? 'block' : 'none';
+            } catch (error) {
+                console.error('Error in toggleResults:', error);
+            }
+        }
+
+        function applyConditionalFormatting() {
+            try {
+                // Rate %
+                const rateInput = document.getElementById('resultRate');
+                const rateValue = rateInput.value || '0%';
+                const rate = parseFloat(rateValue.replace(/%/g, '')) || 0;
+                rateInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (rateValue === '0%' || rate < 3.5) {
+                    rateInput.classList.add('positive');
+                } else if (rate >= 3.5 && rate <= 4.99) {
+                    rateInput.classList.add('zero');
+                } else {
+                    rateInput.classList.add('negative');
+                }
+
+                // Cash Flow
+                const cashFlowInput = document.getElementById('resultCashFlow');
+                const cashFlowValue = cashFlowInput.value || '$0';
+                const cashFlow = parseFloat(cashFlowValue.replace(/[$,]/g, '')) || 0;
+                cashFlowInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (cashFlowValue === '$0' || cashFlow >= 0) {
+                    cashFlowInput.classList.add('positive');
+                } else {
+                    cashFlowInput.classList.add('negative');
+                }
+
+                // Cash on Cash Return
+                const cashOnCashInput = document.getElementById('cashOnCashReturn');
+                const cashOnCashValue = cashOnCashInput.value || '0%';
+                const cashOnCashReturn = parseFloat(cashOnCashValue.replace(/%/g, '')) || 0;
+                cashOnCashInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (cashOnCashValue === '0%' || cashOnCashReturn < 4.99) {
+                    cashOnCashInput.classList.add('negative');
+                } else if (cashOnCashReturn >= 5 && cashOnCashReturn <= 9.99) {
+                    cashOnCashInput.classList.add('zero');
+                } else {
+                    cashOnCashInput.classList.add('positive');
+                }
+
+                // Entry Fee %
+                const entryFeeInput = document.getElementById('entryFeePercent');
+                const entryFeeValue = entryFeeInput.value || '0%';
+                const entryFeePercent = parseFloat(entryFeeValue.replace(/%/g, '')) || 0;
+                entryFeeInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (entryFeeValue === '0%' || entryFeePercent < 9.99) {
+                    entryFeeInput.classList.add('positive');
+                } else if (entryFeePercent >= 10 && entryFeePercent <= 19.99) {
+                    entryFeeInput.classList.add('zero');
+                } else {
+                    entryFeeInput.classList.add('negative');
+                }
+
+                // Instant Equity
+                const instantEquityInput = document.getElementById('instantEquity');
+                const instantEquityValue = instantEquityInput.value || '$0';
+                const instantEquity = parseFloat(instantEquityValue.replace(/[$,]/g, '')) || 0;
+                instantEquityInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (instantEquityValue === '$0' || instantEquity >= 0) {
+                    instantEquityInput.classList.add('positive');
+                } else {
+                    instantEquityInput.classList.add('negative');
+                }
+
+                // Instant Equity %
+                const instantEquityPercentInput = document.getElementById('instantEquityPercent');
+                const instantEquityPercentValue = instantEquityPercentInput.value || '0%';
+                const instantEquityPercent = parseFloat(instantEquityPercentValue.replace(/%/g, '')) || 0;
+                instantEquityPercentInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (instantEquityPercentValue === '0%' || (instantEquityPercent >= 0 && instantEquityPercent <= 9.99)) {
+                    instantEquityPercentInput.classList.add('zero');
+                } else if (instantEquityPercent >= 10) {
+                    instantEquityPercentInput.classList.add('positive');
+                } else {
+                    instantEquityPercentInput.classList.add('negative');
+                }
+
+                // Balloon Years
+                const balloonYearsInput = document.getElementById('balloonYears');
+                const balloonYearsValue = balloonYearsInput.value || 'N/A';
+                const balloonYearsNum = parseFloat(balloonYearsValue) || 0;
+                balloonYearsInput.classList.remove('positive', 'negative', 'zero', 'blank');
+                if (balloonYearsValue === 'N/A' || balloonYearsValue === '0') {
+                    balloonYearsInput.classList.add('positive');
+                } else if (balloonYearsNum >= 1 && balloonYearsNum <= 9) {
+                    balloonYearsInput.classList.add('negative');
+                } else {
+                    balloonYearsInput.classList.add('zero');
+                }
+            } catch (error) {
+                console.error('Error in applyConditionalFormatting:', error);
+            }
+        }
+
+        function updateOperatingExpenses() {
+            try {
+                const insurance = parseFloat(document.getElementById('insurance').value.replace(/[$,]/g, '')) || 0;
+                const taxes = parseFloat(document.getElementById('taxes').value.replace(/[$,]/g, '')) || 0;
+                const additional = parseFloat(document.getElementById('additional').value.replace(/[$,]/g, '')) || 0;
+                const totalMonthlyOperatingExpenses = insurance + taxes + additional;
+
+                document.getElementById('totalMonthlyOperatingExpenses').value = formatMoney(totalMonthlyOperatingExpenses, true);
+                updateCalculations();
+            } catch (error) {
+                console.error('Error in updateOperatingExpenses:', error);
+            }
+        }
+
+        function updateLoanCalculations() {
+            try {
+                const purchasePrice = parseFloat(document.getElementById('purchasePrice').value.replace(/[$,]/g, '')) || 0;
+                let downPayment = parseFloat(document.getElementById('downPayment').value.replace(/[$,]/g, '')) || 0;
+                let loanAmount = loanAmountModified ? parseFloat(document.getElementById('loanAmount').value.replace(/[$,]/g, '')) || 0 : Math.max(0, purchasePrice - downPayment);
+                const rate = parseFloat(document.getElementById('rate').value.replace(/%/g, '')) || 0;
+                const loanLength = parseFloat(document.getElementById('loanLength').value) || 0;
+                let monthlyPayment;
+
+                document.getElementById('downPayment').value = formatMoneyInput(downPayment);
+                document.getElementById('loanAmount').value = formatMoneyInput(loanAmount);
+
+                if (rate === 0) {
+                    // Simplified formula for 0% interest: Monthly Payment = Loan Amount / (Loan Length in months)
+                    monthlyPayment = loanLength > 0 ? loanAmount / (loanLength * 12) : 0;
+                } else {
+                    // Standard amortization formula for non-zero interest rate
+                    const monthlyRate = rate / 100 / 12;
+                    const numberOfPayments = loanLength * 12;
+                    monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+                }
+
+                document.getElementById('monthlyPayment').value = formatMoney(monthlyPayment, true);
+                updateCalculations();
+            } catch (error) {
+                console.error('Error in updateLoanCalculations:', error);
+            }
+        }
+
+        function updateAcquisitionExpenses() {
+            try {
+                const agentFees = parseFloat(document.getElementById('agentFees').value.replace(/[$,]/g, '')) || 0;
+                const closingCosts = parseFloat(document.getElementById('closingCosts').value.replace(/[$,]/g, '')) || 0;
+                const additionalAcquisition = parseFloat(document.getElementById('additionalAcquisition').value.replace(/[$,]/g, '')) || 0;
+                const totalAcquisitionExpenses = agentFees + closingCosts + additionalAcquisition;
+
+                document.getElementById('totalAcquisitionExpenses').value = formatMoney(totalAcquisitionExpenses, true);
+                updateCalculations();
+            } catch (error) {
+                console.error('Error in updateAcquisitionExpenses:', error);
+            }
+        }
+
+        function updateRepairEstimates(checkbox) {
+            try {
+                const checkboxes = document.querySelectorAll('input[name="repairCondition"]');
+                const repairCost = document.getElementById('repairCost');
+                const repairDays = document.getElementById('repairDays');
+
+                checkboxes.forEach(cb => {
+                    if (cb !== checkbox) cb.checked = false;
+                });
+
+                if (checkbox.checked) {
+                    switch (checkbox.value) {
+                        case 'smoothSailing':
+                            repairCost.value = '$20';
+                            repairDays.value = '15';
+                            break;
+                        case 'shiverMeTimbers':
+                            repairCost.value = '$30';
+                            repairDays.value = '30';
+                            break;
+                        case 'abandonShip':
+                            repairCost.value = '$40';
+                            repairDays.value = '60';
+                            break;
+                        case 'burnTheShip':
+                            repairCost.value = '$50';
+                            repairDays.value = '90';
+                            break;
+                        default:
+                            repairCost.value = '';
+                            repairDays.value = '';
+                            break;
+                    }
+                } else {
+                    repairCost.value = '';
+                    repairDays.value = '';
+                }
+
+                updateRepairs();
+                updateCalculations();
+            } catch (error) {
+                console.error('Error in updateRepairEstimates:', error);
+            }
+        }
+
+        function updateExtraField() {
+            try {
+                const majorItems = parseInt(document.getElementById('majorItems').value) || 0;
+                const extraField = document.getElementById('extraField');
+                const extraValueInput = document.getElementById('extraValue');
+
+                // Show/hide the Cost per Item field based on majorItems
+                extraField.style.display = majorItems > 0 ? 'block' : 'none';
+
+                // Auto-populate Cost per Item with $10,000 if majorItems > 0 and field is empty
+                if (majorItems > 0 && (!extraValueInput.value || extraValueInput.value === '$0')) {
+                    extraValueInput.value = formatMoneyInput(10000);
+                } else if (majorItems === 0) {
+                    extraValueInput.value = ''; // Clear the field when majorItems is 0
+                }
+
+                updateRepairs();
+                updateCalculations();
+            } catch (error) {
+                console.error('Error in updateExtraField:', error);
+            }
+        }
+
+        function updateRepairs() {
+            try {
+                const repairsInput = document.getElementById('repairs');
+                if (repairsInput.dataset.userEdited === 'true') return;
+
+                const sqft = parseFloat(document.getElementById('sqft').value) || 0;
+                const repairCost = parseFloat(document.getElementById('repairCost').value.replace(/[$,]/g, '')) || 0;
+                const majorItems = parseInt(document.getElementById('majorItems').value) || 0;
+                const extraValue = parseFloat(document.getElementById('extraValue').value.replace(/[$,]/g, '')) || 0;
+
+                const totalRepairs = (sqft * repairCost) + (majorItems * extraValue);
+                repairsInput.value = totalRepairs > 0 ? formatMoney(totalRepairs, true) : '$0';
+                updateCalculations();
+            } catch (error) {
+                console.error('Error in updateRepairs:', error);
+            }
+        }
+
+        function updateCalculations() {
+            try {
+                const purchasePrice = parseFloat(document.getElementById('purchasePrice').value.replace(/[$,]/g, '')) || 0;
+                const fairMarketValue = fairMarketValueModified ? parseFloat(document.getElementById('fairMarketValue').value.replace(/[$,]/g, '')) || 0 : purchasePrice;
+                const rent = parseFloat(document.getElementById('rent').value.replace(/[$,]/g, '')) || 0;
+                const repairs = parseFloat(document.getElementById('repairs').value.replace(/[$,]/g, '')) || 0;
+                const totalMonthlyOperatingExpenses = parseFloat(document.getElementById('totalMonthlyOperatingExpenses').value.replace(/[$,]/g, '')) || 0;
+                const monthlyPayment = parseFloat(document.getElementById('monthlyPayment').value.replace(/[$,]/g, '')) || 0;
+                const totalAcquisitionExpenses = parseFloat(document.getElementById('totalAcquisitionExpenses').value.replace(/[$,]/g, '')) || 0;
+                const downPayment = parseFloat(document.getElementById('downPayment').value.replace(/[$,]/g, '')) || 0;
+
+                // Fair Market Value
+                document.getElementById('fairMarketValue').value = formatMoneyInput(fairMarketValue);
+
+                // MAMO
+                const mamo = rent - totalMonthlyOperatingExpenses;
+                document.getElementById('mamo').value = formatMoney(mamo, true);
+
+                // Cash Flow
+                const cashFlow = mamo - monthlyPayment;
+                document.getElementById('cashFlow').value = formatMoney(cashFlow, true);
+                document.getElementById('resultCashFlow').value = formatMoney(cashFlow, true);
+
+                // Entry Fee
+                const entryFee = totalAcquisitionExpenses + repairs + downPayment;
+                document.getElementById('entryFee').value = formatMoney(entryFee, true);
+                const entryFeePercent = purchasePrice ? (entryFee / purchasePrice) * 100 : 0;
+                document.getElementById('entryFeePercent').value = formatPercent(entryFeePercent);
+
+                // Instant Equity
+                const instantEquity = fairMarketValue - purchasePrice;
+                document.getElementById('instantEquity').value = formatMoney(instantEquity, true);
+                const instantEquityPercent = purchasePrice ? (instantEquity / purchasePrice) * 100 : 0;
+                document.getElementById('instantEquityPercent').value = formatPercent(instantEquityPercent);
+
+                // Cash on Cash Return
+                const cashOnCashReturn = entryFee ? (cashFlow * 12 / entryFee) * 100 : 0;
+                document.getElementById('cashOnCashReturn').value = formatPercent(cashOnCashReturn, true);
+
+                // Rate
+                const rate = parseFloat(document.getElementById('rate').value.replace(/%/g, '')) || 0;
+                document.getElementById('resultRate').value = formatPercent(rate);
+
+                // Balloon Years
+                const balloonYears = parseFloat(document.getElementById('balloonInput').value) || 0;
+                document.getElementById('balloonYears').value = balloonYears > 0 ? balloonYears.toString() : 'N/A';
+
+                // Score
+                let score = 0;
+                if (rate <= 5) score += 20;
+                if (cashOnCashReturn >= 5) score += 20;
+                if (entryFeePercent <= 10) score += 20;
+                if (instantEquityPercent >= 10) score += 20;
+                if (balloonYears >= 10 || balloonYears === 0 || isNaN(balloonYears)) score += 20;
+                document.getElementById('score').value = `${(score / 10).toFixed(0)}/10`;
+
+                // Assignment Fee Estimator
+                const scoreDecimal = score / 100;
+                const assignmentFeeEstimator = purchasePrice * 0.05 * scoreDecimal;
+                document.getElementById('assignmentFeeEstimator').value = formatMoney(assignmentFeeEstimator, true);
+
+                applyConditionalFormatting();
+            } catch (error) {
+                console.error('Error in updateCalculations:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                ['sqft', 'extraValue', 'repairCost'].forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.addEventListener('input', () => {
+                            updateRepairs();
+                            updateCalculations();
+                        });
+                    }
+                });
+                const majorItems = document.getElementById('majorItems');
+                if (majorItems) {
+                    majorItems.addEventListener('change', updateExtraField);
+                }
+                ['smoothSailing', 'shiverMeTimbers', 'abandonShip', 'burnTheShip'].forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.addEventListener('change', (e) => {
+                            updateRepairEstimates(document.getElementById(id));
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Error in DOMContentLoaded:', error);
+            }
+        });
+    </script>
+</body>
+</html>
